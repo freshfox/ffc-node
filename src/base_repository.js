@@ -222,11 +222,6 @@ class BaseRepository extends EventEmitter {
 
 		return this.query(query);
 	}
-
-	static setup(bookshelf) {
-		BaseRepository.Bookshelf = bookshelf;
-	}
-
 }
 
 

@@ -6,7 +6,7 @@ const _ = require('lodash');
 class BaseTestCase {
 
 	static getConfig() {
-		throw new Error('BaseTestCase.getConfig() must be implemented');
+		return BaseTestCase.Config.database;
 	}
 
 	static getServer() {
