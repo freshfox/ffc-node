@@ -148,4 +148,4 @@ function getBoundControllerFunction(callback, controllers) {
 	return func.bind(controller);
 }
 
-module.exports = new Router();
+module.exports = Router;

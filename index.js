@@ -19,5 +19,6 @@ class FFCore {
 FFCore.BaseRepository = BaseRepository;
 FFCore.WebError = require('./src/error');
 FFCore.BaseTestCase = BaseTestCase;
+FFCore.Router = require('./src/router');
 
 module.exports = FFCore;
