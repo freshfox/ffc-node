@@ -6,6 +6,9 @@
   "directories": {
     "test": "test"
   },
+  "engines": {
+    "node": "8.1.0"
+  },
   "scripts": {
     "test": "mocha"
   },
@@ -15,5 +18,8 @@
   },
   "author": "Dominic Bartl",
   "license": "UNLICENSED",
-  "homepage": "https://bitbucket.org/freshfox/ffc-node#readme"
+  "homepage": "https://bitbucket.org/freshfox/ffc-node#readme",
+  "dependencies": {
+    "bluebird": "^3.5.0"
+  }
 }
