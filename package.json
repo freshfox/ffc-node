@@ -1,0 +1,19 @@
+{
+  "name": "ffc-node",
+  "version": "1.0.0",
+  "description": "The Freshfox Core Node package",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/freshfox/ffc-node.git"
+  },
+  "author": "Dominic Bartl",
+  "license": "UNLICENSED",
+  "homepage": "https://bitbucket.org/freshfox/ffc-node#readme"
+}
