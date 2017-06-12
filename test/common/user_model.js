@@ -1,6 +1,6 @@
-const Bookshelf = require('../../index').Config.Bookshelf;
+const Bookshelf = require('../../dist').FFCore.Config.Bookshelf;
 
-class User extends Bookshelf.Model{
+class User extends Bookshelf.Model {
 
 	//noinspection JSMethodCanBeStatic
 	get tableName() {

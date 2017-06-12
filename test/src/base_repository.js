@@ -1,6 +1,6 @@
 const should = require('should');
 const TestCase = require('../test_case');
-const BaseRepository = require('../../dist/base_repository');
+const BaseRepository = require('../../dist').BaseRepository;
 
 const userRepo = new BaseRepository(require('../common/user_model'));
 

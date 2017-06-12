@@ -120,7 +120,7 @@ const createHandler = (router: Router, route: Route, controllers) => {
 
 	let callback = getBoundControllerFunction(route.callback, controllers);
 
-	return async (req, res, next) => {
+	return (req, res, next) => {
 		new BPromise((resolve, reject) => {
 
 			try {

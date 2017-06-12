@@ -1,4 +1,4 @@
-const BaseTestCase = require('../index').BaseTestCase;
+const BaseTestCase = require('../dist').BaseTestCase;
 const env = require('node-env-file');
 const fs = require('fs');
 
