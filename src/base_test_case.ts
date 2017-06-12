@@ -1,17 +1,11 @@
 const fs = require('fs');
 const request = require('supertest');
-const Promise = require('bluebird');
 const _ = require('lodash');
 
-class BaseTestCase {
+export class BaseTestCase {
 
-	static getConfig() {
-		return BaseTestCase.Config.database;
-	}
-
-	static getServer() {
-		throw new Error('BaseTestCase.getServer() must be implemented');
-	}
+	public static Config: any;
+	public static Server: any;
 
 	static init(context, useServer, useDatabase) {
 		if (useServer) {
@@ -19,7 +13,7 @@ class BaseTestCase {
 				return this._startServer();
 			});
 			context.afterEach(() => {
-				const app = BaseTestCase.getServer();
+				const app = BaseTestCase.Server;
 				return app.stop();
 			});
 		} else if (useDatabase) {
@@ -30,7 +24,7 @@ class BaseTestCase {
 	}
 
 	static request() {
-		return request(BaseTestCase.get());
+		return request(BaseTestCase.Server);
 	}
 
 	static get(path) {
@@ -71,15 +65,14 @@ class BaseTestCase {
 	}
 
 	static _startServer() {
-		const app = BaseTestCase.getServer();
 		return this._createDatabase()
 			.then(function () {
-				return app.start();
+				return BaseTestCase.Server.start();
 			});
 	}
 
-	static _createDatabase() {
-		let config = this.getConfig();
+	private static _createDatabase() {
+		let config = BaseTestCase.Config;
 		let name = config.connection.database;
 
 		let knex = require('knex')({
@@ -104,9 +97,6 @@ class BaseTestCase {
 	}
 
 	static send(req, auth) {
-		if (auth) {
-			req.set('Authorization', 'Bearer ' + Config.app.test.token);
-		}
 		return this._send(req);
 	}
 
@@ -116,5 +106,3 @@ class BaseTestCase {
 		}
 	}
 }
-
-module.exports = BaseTestCase;

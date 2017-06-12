@@ -1,6 +1,6 @@
 const should = require('should');
 const TestCase = require('../test_case');
-const BaseRepository = require('../../index').BaseRepository;
+const BaseRepository = require('../../dist/base_repository');
 
 const userRepo = new BaseRepository(require('../common/user_model'));
 
@@ -15,7 +15,6 @@ describe('BaseRepository', function () {
 			lastname: 'Pattern',
 			password: 'password',
 			email: 'max@pattern.com'
-
 		};
 
 		return userRepo.save(data)

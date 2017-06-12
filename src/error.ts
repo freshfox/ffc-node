@@ -1,17 +1,12 @@
-const util = require('util');
 
-class WebError extends Error {
+export class WebError extends Error {
 
-	constructor(code, message, stack) {
+	constructor(public code: number, public message: string, public errors: any = null) {
 		super(message);
-		this.code = code;
-		this.message = message;
-		this.errors = stack;
-
 		this.name = this.constructor.name;
 	}
 
-	static badRequest (message, stack) {
+	static badRequest (message, stack = null) {
 		return new WebError(400, message || 'Bad Request', stack);
 	}
 
@@ -39,5 +34,3 @@ class WebError extends Error {
 		return new WebError(400, 'Validation error', stack)
 	}
 }
-
-module.exports = WebError;

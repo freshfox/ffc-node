@@ -1,9 +1,22 @@
-const EventEmitter = require('events');
-const path = require('path');
-const Promise = require('bluebird');
-const WebError = require('./error');
+import {EventEmitter} from "events";
+import * as path from "path";
+import * as BPromise from "bluebird";
+import {WebError} from "./error";
 
-class Router extends EventEmitter {
+export interface Route {
+
+	method: string;
+	endpoint: string,
+	callback: Function,
+	middleware: Function
+
+}
+
+export class Router extends EventEmitter {
+
+	private basePath: string;
+	private routes: Route[];
+	private nodes: Router[];
 
 	constructor(path) {
 		super();
@@ -76,7 +89,7 @@ class Router extends EventEmitter {
 			let method = route.method.toLowerCase();
 			let endpoint = router.getPath(route.endpoint);
 
-			let callback = createHandler(route, controllers);
+			let callback = createHandler(router, route, controllers);
 
 			if (route.middleware) {
 				app[method].call(app, endpoint, route.middleware, callback);
@@ -103,12 +116,12 @@ class Router extends EventEmitter {
 	}
 }
 
-const createHandler = (router, route, controllers) => {
+const createHandler = (router: Router, route: Route, controllers) => {
 
 	let callback = getBoundControllerFunction(route.callback, controllers);
 
-	return (req, res, next) =>{
-		new Promise((resolve, reject) => {
+	return async (req, res, next) => {
+		new BPromise((resolve, reject) => {
 
 			try {
 				let result = callback(req, res, next);
@@ -147,5 +160,3 @@ function getBoundControllerFunction(callback, controllers) {
 
 	return func.bind(controller);
 }
-
-module.exports = Router;

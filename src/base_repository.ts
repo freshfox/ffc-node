@@ -1,25 +1,21 @@
-const util = require('util');
-const EventEmitter = require('events');
-const _ = require('lodash');
-const Promise = require('bluebird');
-const WebError = require('./error');
-
-/**
- * @class BaseRepository
- * @property model
- * @template T
- */
+import {EventEmitter} from "events";
+import * as BPromise from "bluebird";
+import {WebError} from "./error";
+import {Bookshelf} from 'bookshelf';
+import {_} from 'lodash';
+import {Pagination} from "./pagination";
 
 /**
  * A base repository to access the database of a given model
  * @param model The bookshelf model
  * @constructor
  */
-class BaseRepository extends EventEmitter {
+export class BaseRepository extends EventEmitter {
 
-	constructor(model) {
+	private tableName: string;
+
+	constructor(private model: any) {
 		super();
-		this.model = model;
 		this.tableName = this.model.forge().tableName;
 	}
 
@@ -55,12 +51,12 @@ class BaseRepository extends EventEmitter {
 	 */
 	findOrThrow(attributes) {
 		return this.find(attributes)
-				.then((model) => {
+			.then((model) => {
 				if (!model) {
-			throw WebError.notFound(`Model not found in ${this.tableName}(#${attributes ? attributes.id : ''})`);
-		}
-		return model
-	});
+					throw WebError.notFound(`Model not found in ${this.tableName}(#${attributes ? attributes.id : ''})`);
+				}
+				return model
+			});
 	}
 
 	/**
@@ -81,7 +77,7 @@ class BaseRepository extends EventEmitter {
 	 * @param {Object} [options] - Some query options for knex
 	 * @returns {Promise}
 	 */
-	query(filter, options) {
+	query(filter, options = null) {
 		return this.model.collection()
 			.query(filter)
 			.fetch({
@@ -97,12 +93,12 @@ class BaseRepository extends EventEmitter {
 
 	count(attributes) {
 		return this.model.forge()
-				.query()
-				.where(attributes || {})
-				.count()
-				.then((count) => {
+			.query()
+			.where(attributes || {})
+			.count()
+			.then((count) => {
 				return count[0]['count(*)'];
-	})
+			})
 	}
 
 	/**
@@ -118,15 +114,15 @@ class BaseRepository extends EventEmitter {
 			});
 	};
 
-	saveForAccount(accountId, data){
+	saveForAccount(accountId, data) {
 		data.account_id = accountId;
 		let promise = data.id
 			? this.findOrThrow({id: data.id, account_id: accountId})
 			: Promise.resolve(true);
 		return promise
-				.then(() => {
+			.then(() => {
 				return this.save(data);
-	});
+			});
 	}
 
 	/**
@@ -145,8 +141,8 @@ class BaseRepository extends EventEmitter {
 	 * @param {Pagination} pagination
 	 * @returns {Object}
 	 */
-	createQuery(attributes, order, pagination) {
-		let filter = attributes ? {where: attributes} : {};
+	createQuery(attributes, order, pagination: Pagination) {
+		let filter = attributes ? {where: attributes} : {} as any;
 		if (order) {
 			filter.orderBy = [order.column, order.direction];
 		}
@@ -165,58 +161,58 @@ class BaseRepository extends EventEmitter {
 		let self = this;
 		let data;
 		let relation;
-		return Promise.props({
-				baseModel: this.find({id: baseModelId, account_id: accountId}),
-				withModel: withRepo.find({id: withModelId, account_id: accountId})
-			})
-				.then((result) => {
+		return BPromise.props({
+			baseModel: this.find({id: baseModelId, account_id: accountId}),
+			withModel: withRepo.find({id: withModelId, account_id: accountId})
+		})
+			.then((result) => {
 				if (!result.baseModel || !result.withModel) {
-			throw WebError.notFound('Unable to find model')
-		}
-		let baseModelInstance = self.model.forge({id: baseModelId});
-		let withModelInstance = withRepo.model.forge({id: withModelId});
-		let relation = baseModelInstance.related(withModelInstance.tableName);
-		if (!relation) {
-			throw WebError.badRequest('Can not associate models');
-		}
-		data = result;
+					throw WebError.notFound('Unable to find model')
+				}
+				let baseModelInstance = self.model.forge({id: baseModelId});
+				let withModelInstance = withRepo.model.forge({id: withModelId});
+				let relation = baseModelInstance.related(withModelInstance.tableName);
+				if (!relation) {
+					throw WebError.badRequest('Can not associate models');
+				}
+				data = result;
 
-		return relation.attach(withModelInstance).return(relation);
-	})
-	.then((r) => {
-			relation = r;
-		if (resolveData) {
-			return resolveData.call(this, data.baseModel, data.withModel);
-		}
-	})
-	.then((pivotData) => {
-			if (pivotData) {
-				return relation.updatePivot(pivotData);
-			}
-		});
+				return relation.attach(withModelInstance).return(relation);
+			})
+			.then((r) => {
+				relation = r;
+				if (resolveData) {
+					return resolveData.call(this, data.baseModel, data.withModel);
+				}
+			})
+			.then((pivotData) => {
+				if (pivotData) {
+					return relation.updatePivot(pivotData);
+				}
+			});
 	}
 
 	dissociate(withRepo, accountId, baseModelId, withModelId) {
 
-		return Promise.props({
-				baseModel: this.findOrThrow({ id: baseModelId, account_id: accountId}),
-				withModel: withRepo.findOrThrow({ id: withModelId, account_id: accountId})
-			})
-				.then((result) => {
+		return BPromise.props({
+			baseModel: this.findOrThrow({id: baseModelId, account_id: accountId}),
+			withModel: withRepo.findOrThrow({id: withModelId, account_id: accountId})
+		})
+			.then((result) => {
 				let baseModelInstance = this.model.forge({id: baseModelId});
-		let withModelInstance = withRepo.model.forge({id: withModelId});
-		let relation = baseModelInstance.related(withModelInstance.tableName);
-		if (!relation) {
-			throw WebError.badRequest('Can not dissociate models');
-		}
-		return relation.detach(withModelInstance);
-	})
+				let withModelInstance = withRepo.model.forge({id: withModelId});
+				let relation = baseModelInstance.related(withModelInstance.tableName);
+				if (!relation) {
+					throw WebError.badRequest('Can not dissociate models');
+				}
+				return relation.detach(withModelInstance);
+			})
 
 	}
 
 	listBetween(accountId, from, to, order, pagination, column = 'date') {
 		let query = this.createQuery({
-			account_id : accountId
+			account_id: accountId
 		}, order, pagination);
 		query.whereBetween = [column, [from, to]];
 
@@ -242,7 +238,7 @@ function save(model, data) {
 			_.forOwn(relations, function (value, key) {
 				let relation = savedModel.related(key);
 				let relationIds = [];
-				if (relation instanceof BaseRepository.Bookshelf.Collection) {
+				if (relation instanceof Bookshelf.Collection) {
 					let foreignAttributes = {};
 					if (relation.relatedData.type !== 'belongsToMany') {
 						foreignAttributes[relation.relatedData.key('foreignKey')] = relation.relatedData.parentId;
@@ -264,7 +260,7 @@ function save(model, data) {
 			});
 
 			if (relationPromises.length > 0) {
-				return Promise.all(relationPromises)
+				return BPromise.all(relationPromises)
 					.return(savedModel);
 			}
 
@@ -298,5 +294,3 @@ function transformAndOmitAttachedObjects(model, data) {
 function mapIds(value) {
 	return value.id;
 }
-
-module.exports = BaseRepository;
