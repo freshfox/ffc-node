@@ -1,7 +1,9 @@
-const Checkit = require('checkit');
-const BPromise = require('bluebird');
-const WebError = require('./errors');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const Checkit = require("checkit");
+const BPromise = require("bluebird");
 const _ = require("lodash");
+const error_1 = require("./error");
 class Validator {
     /**
      * Validates a given data set against the rules
@@ -46,7 +48,7 @@ class Validator {
             _.defaults(error, subErrors);
         }
         if (error) {
-            error = WebError.createValidationError(error);
+            error = error_1.WebError.createValidationError(error);
         }
         else {
             _.defaults(validatedObject, result[1]);
@@ -75,6 +77,7 @@ class Validator {
         return stack;
     }
 }
+exports.Validator = Validator;
 Validator.register('boolean', (val) => {
     return typeof val == 'boolean';
 });

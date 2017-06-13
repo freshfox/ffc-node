@@ -1,8 +1,4 @@
-declare const Checkit: any;
-declare const BPromise: any;
-declare const WebError: any;
-declare const _: any;
-declare class Validator {
+export declare class Validator {
     /**
      * Validates a given data set against the rules
      * @param rules

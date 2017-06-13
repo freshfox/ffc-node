@@ -1,9 +1,9 @@
-const Checkit = require('checkit');
-const BPromise = require('bluebird');
-const WebError = require('./errors');
-const _ = require("lodash");
+import * as Checkit from 'checkit';
+import * as BPromise from 'bluebird';
+import * as _ from 'lodash';
+import {WebError} from "./error";
 
-class Validator {
+export class Validator {
 
 	/**
 	 * Validates a given data set against the rules
@@ -69,7 +69,7 @@ class Validator {
 		});
 	}
 
-	static register (name, callback) {
+	static register(name, callback) {
 		Checkit.Validator.prototype[name] = callback;
 	};
 
@@ -94,25 +94,25 @@ Validator.register('dateString', (dateString) => {
 	// First check for the pattern
 	let regex_date = /^\d{4}-\d{1,2}-\d{1,2}$/;
 
-	if(!regex_date.test(dateString)) {
+	if (!regex_date.test(dateString)) {
 		return false;
 	}
 
 	// Parse the date parts to integers
-	let parts   = dateString.split("-");
-	let day     = parseInt(parts[2], 10);
-	let month   = parseInt(parts[1], 10);
-	let year    = parseInt(parts[0], 10);
+	let parts = dateString.split("-");
+	let day = parseInt(parts[2], 10);
+	let month = parseInt(parts[1], 10);
+	let year = parseInt(parts[0], 10);
 
 	// Check the ranges of month and year
-	if(year < 1000 || year > 3000 || month == 0 || month > 12) {
+	if (year < 1000 || year > 3000 || month == 0 || month > 12) {
 		return false;
 	}
 
-	let monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+	let monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	// Adjust for leap years
-	if(year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
+	if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
 		monthLength[1] = 29;
 	}
 
