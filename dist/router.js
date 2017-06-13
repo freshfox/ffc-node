@@ -35,14 +35,14 @@ class Router extends events_1.EventEmitter {
         this.nodes.push(router);
     }
     crud(endpoint, controller, callback) {
-        this.group(endpoint, function () {
-            this.get('', controller + '.find');
-            this.get('/:id', controller + '.findOne');
-            this.post('', controller + '.create');
-            this.patch('/:id', controller + '.update');
-            this.destroy('/:id', controller + '.destroy');
+        this.group(endpoint, (router) => {
+            router.get('', controller + '.find');
+            router.get('/:id', controller + '.findOne');
+            router.post('', controller + '.create');
+            router.patch('/:id', controller + '.update');
+            router.destroy('/:id', controller + '.destroy');
             if (callback) {
-                callback.apply(this);
+                callback.call(null, router);
             }
         });
     }

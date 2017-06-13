@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "directories": {
-    "test": "test"
+    "test": "test",
+    "lib": "src"
   },
   "engines": {
     "node": "8.1.0"
