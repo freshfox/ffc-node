@@ -60,7 +60,7 @@ class BaseTestCase {
         });
     }
     static _createDatabase() {
-        let config = BaseTestCase.Config;
+        let config = BaseTestCase.Config.database;
         let name = config.connection.database;
         let knex = require('knex')({
             client: 'mysql',

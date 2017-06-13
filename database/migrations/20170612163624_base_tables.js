@@ -1,14 +1,24 @@
 
 exports.up = function(knex, Promise) {
-	return knex.schema.createTable('users', function (table) {
-		table.increments().primary();
-		table.string('firstname');
-		table.string('lastname');
-		table.string('email').unique().notNullable();
-		table.string('password').notNullable();
-		table.boolean('confirmed').defaultTo(false);
-		table.timestamps();
-	});
+	return Promise.all([
+		knex.schema.createTable('users', function (table) {
+			table.increments().primary();
+			table.string('firstname');
+			table.string('lastname');
+			table.string('email').unique().notNullable();
+			table.string('password').notNullable();
+			table.boolean('confirmed').defaultTo(false);
+			table.timestamps();
+		}),
+		knex.schema.createTable('posts', function (table) {
+			table.increments().primary();
+			table.string('title');
+			table.text('content');
+			table.integer('user_id').unsigned().references('id').inTable('users');
+			table.timestamps();
+		})
+	])
+
 };
 
 exports.down = function(knex, Promise) {

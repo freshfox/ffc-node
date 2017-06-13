@@ -8,6 +8,7 @@ import { Pagination } from "./pagination";
  */
 export declare class BaseRepository extends EventEmitter {
     private model;
+    static Bookshelf: any;
     private tableName;
     constructor(model: any);
     /**

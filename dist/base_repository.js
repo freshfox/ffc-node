@@ -2,9 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
 const BPromise = require("bluebird");
+const _ = require("lodash");
 const error_1 = require("./error");
-const bookshelf_1 = require("bookshelf");
-const lodash_1 = require("lodash");
 /**
  * A base repository to access the database of a given model
  * @param model The bookshelf model
@@ -123,7 +122,7 @@ class BaseRepository extends events_1.EventEmitter {
      * @returns {Promise}
      */
     destroy(data) {
-        return this.model.forge(lodash_1._.pick(data, 'id', 'account_id')).destroy();
+        return this.model.forge(_.pick(data, 'id', 'account_id')).destroy();
     }
     ;
     /**
@@ -212,17 +211,17 @@ function save(model, data) {
     let attributes = result.attributes;
     let relations = result.relations;
     // Save the model itself
-    return model.forge(lodash_1._.pick(attributes, 'id'))
+    return model.forge(_.pick(attributes, 'id'))
         .save(attributes)
         .then(function (savedModel) {
-        return savedModel.load(lodash_1._.keys(relations));
+        return savedModel.load(_.keys(relations));
     })
         .then(function (savedModel) {
         let relationPromises = [];
-        lodash_1._.forOwn(relations, function (value, key) {
+        _.forOwn(relations, function (value, key) {
             let relation = savedModel.related(key);
             let relationIds = [];
-            if (relation instanceof bookshelf_1.Bookshelf.Collection) {
+            if (relation instanceof BaseRepository.Bookshelf.Collection) {
                 let foreignAttributes = {};
                 if (relation.relatedData.type !== 'belongsToMany') {
                     foreignAttributes[relation.relatedData.key('foreignKey')] = relation.relatedData.parentId;
@@ -235,8 +234,8 @@ function save(model, data) {
                         relationIds.push(result.attributes.id);
                     }
                 }
-                let existingIds = lodash_1._.map(relation.toJSON(), mapIds);
-                let toDelete = lodash_1._.difference(existingIds, relationIds);
+                let existingIds = _.map(relation.toJSON(), mapIds);
+                let toDelete = _.difference(existingIds, relationIds);
                 if (toDelete.length > 0) {
                     relationPromises.push(relation.model.query().whereIn('id', toDelete).del());
                 }
@@ -252,18 +251,18 @@ function save(model, data) {
 function transformAndOmitAttachedObjects(model, data) {
     let relations = {};
     let attributes = Object.assign({}, data);
-    lodash_1._.forOwn(attributes, function (value, key) {
-        if (lodash_1._.isArray(value)) {
+    _.forOwn(attributes, function (value, key) {
+        if (_.isArray(value)) {
             relations[key] = value;
-            attributes = lodash_1._.omit(attributes, key);
+            attributes = _.omit(attributes, key);
         }
-        else if (lodash_1._.isObject(value) && !lodash_1._.isDate(value)) {
-            attributes = lodash_1._.omit(attributes, key);
+        else if (_.isObject(value) && !_.isDate(value)) {
+            attributes = _.omit(attributes, key);
             attributes[key + '_id'] = value.id;
         }
         else if (value === null) {
-            if (lodash_1._.includes(model.load, key)) {
-                attributes = lodash_1._.omit(attributes, key);
+            if (_.includes(model.load, key)) {
+                attributes = _.omit(attributes, key);
                 attributes[key + '_id'] = null;
             }
         }

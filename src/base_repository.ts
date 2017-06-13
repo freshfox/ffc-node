@@ -1,8 +1,7 @@
 import {EventEmitter} from "events";
 import * as BPromise from "bluebird";
+import * as _ from 'lodash';
 import {WebError} from "./error";
-import {Bookshelf} from 'bookshelf';
-import {_} from 'lodash';
 import {Pagination} from "./pagination";
 
 /**
@@ -11,6 +10,8 @@ import {Pagination} from "./pagination";
  * @constructor
  */
 export class BaseRepository extends EventEmitter {
+
+	static Bookshelf: any;
 
 	private tableName: string;
 
@@ -238,7 +239,7 @@ function save(model, data) {
 			_.forOwn(relations, function (value, key) {
 				let relation = savedModel.related(key);
 				let relationIds = [];
-				if (relation instanceof Bookshelf.Collection) {
+				if (relation instanceof BaseRepository.Bookshelf.Collection) {
 					let foreignAttributes = {};
 					if (relation.relatedData.type !== 'belongsToMany') {
 						foreignAttributes[relation.relatedData.key('foreignKey')] = relation.relatedData.parentId;

@@ -1,11 +1,10 @@
 const Bookshelf = require('../../dist').FFCore.Config.Bookshelf;
-const Post = require('./post_model');
 
-class User extends Bookshelf.Model {
+class Post extends Bookshelf.Model {
 
 	//noinspection JSMethodCanBeStatic
 	get tableName() {
-		return 'users';
+		return 'posts';
 	}
 
 	//noinspection JSMethodCanBeStatic
@@ -13,14 +12,6 @@ class User extends Bookshelf.Model {
 		return true;
 	}
 
-	posts () {
-		return this.hasMany(Post);
-	}
-
-	static get load() {
-		return ['posts'];
-	}
-
 }
 
-module.exports = User;
+module.exports = Post;
