@@ -60,10 +60,11 @@ class BaseTestCase {
         });
     }
     static _createDatabase() {
-        let name = BaseTestCase.Config.database.connection.name;
+        let config = BaseTestCase.Config;
+        let name = config.connection.database;
         let knex = require('knex')({
             client: 'mysql',
-            connection: _.pick(BaseTestCase.Config.database.connection, 'host', 'user', 'password', 'charset')
+            connection: _.pick(config.connection, 'host', 'user', 'password', 'charset')
         });
         return knex.raw('DROP DATABASE IF EXISTS ' + name)
             .then(function () {
@@ -73,7 +74,7 @@ class BaseTestCase {
             return knex.destroy();
         })
             .then(function () {
-				BaseTestCase.Config.database.database = name;
+            config.connection.database = name;
             knex = require('knex')(config);
             return knex.migrate.latest();
         })
