@@ -4,27 +4,35 @@ const events_1 = require("events");
 const path = require("path");
 const BPromise = require("bluebird");
 const error_1 = require("./error");
+var Method;
+(function (Method) {
+    Method[Method["GET"] = 'get'] = "GET";
+    Method[Method["POST"] = 'post'] = "POST";
+    Method[Method["PUT"] = 'put'] = "PUT";
+    Method[Method["PATCH"] = 'patch'] = "PATCH";
+    Method[Method["DELETE"] = 'delete'] = "DELETE";
+})(Method = exports.Method || (exports.Method = {}));
 class Router extends events_1.EventEmitter {
-    constructor(path) {
+    constructor(path = '') {
         super();
-        this.basePath = path || '';
         this.routes = [];
         this.nodes = [];
+        this.basePath = path;
     }
-    get(endpoint, func, middleware) {
-        this.addRoute('GET', endpoint, func, middleware);
+    get(name, endpoint, func) {
+        this.addRoute(Method.GET, name, endpoint, func);
     }
-    post(endpoint, func, middleware) {
-        this.addRoute('POST', endpoint, func, middleware);
+    post(name, endpoint, func) {
+        this.addRoute(Method.POST, name, endpoint, func);
     }
-    put(endpoint, func, middleware) {
-        this.addRoute('PUT', endpoint, func, middleware);
+    put(name, endpoint, func) {
+        this.addRoute(Method.PUT, name, endpoint, func);
     }
-    patch(endpoint, func, middleware) {
-        this.addRoute('PATCH', endpoint, func, middleware);
+    patch(name, endpoint, func) {
+        this.addRoute(Method.PATCH, name, endpoint, func);
     }
-    destroy(endpoint, func, middleware) {
-        this.addRoute('DELETE', endpoint, func, middleware);
+    destroy(name, endpoint, func) {
+        this.addRoute(Method.DELETE, name, endpoint, func);
     }
     group(endpoint, callback) {
         let router = new Router(this.getPath(endpoint));
@@ -34,13 +42,13 @@ class Router extends events_1.EventEmitter {
         callback.call(null, router);
         this.nodes.push(router);
     }
-    crud(endpoint, controller, callback) {
+    crud(name, endpoint, controller, callback) {
         this.group(endpoint, (router) => {
-            router.get('', controller + '.find');
-            router.get('/:id', controller + '.findOne');
-            router.post('', controller + '.create');
-            router.patch('/:id', controller + '.update');
-            router.destroy('/:id', controller + '.destroy');
+            router.get(`${name}.list`, '', `${controller}.find`);
+            router.get(`${name}.find`, '/:id', `${controller}.findOne`);
+            router.post(`${name}.create`, '', `${controller}.create`);
+            router.patch(`${name}.update`, '/:id', `${controller}.update`);
+            router.destroy(`${name}.destroy`, '/:id', `${controller}.destroy`);
             if (callback) {
                 callback.call(null, router);
             }
@@ -49,30 +57,39 @@ class Router extends events_1.EventEmitter {
     getPath(endpoint) {
         return path.join(this.basePath, endpoint);
     }
-    addRoute(method, endpoint, func, middleware = null) {
+    addRoute(method, name, endpoint, func) {
         this.routes.push({
+            name: name,
             method: method,
             endpoint: endpoint,
-            callback: func,
-            middleware: middleware
+            callback: func
         });
     }
     init(app, controllers) {
         let router = this;
         this.routes.forEach((route) => {
-            let method = route.method.toLowerCase();
             let endpoint = router.getPath(route.endpoint);
             let callback = createHandler(router, route, controllers);
-            if (route.middleware) {
-                app[method].call(app, endpoint, route.middleware, callback);
-            }
-            else {
-                app[method].call(app, endpoint, callback);
-            }
+            app[route.method].call(app, endpoint, callback);
         });
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].init(app, controllers);
         }
+    }
+    getRoute(name) {
+        let route = this.routes.find((route) => {
+            return route.name === name;
+        });
+        if (route) {
+            return route;
+        }
+        for (let i = 0; i < this.nodes.length; i++) {
+            let route = this.nodes[i].getRoute(name);
+            if (route) {
+                return route;
+            }
+        }
+        return null;
     }
     print() {
         for (let i = 0; i < this.routes.length; i++) {

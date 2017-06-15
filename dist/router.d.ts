@@ -1,25 +1,33 @@
 /// <reference types="node" />
 import { EventEmitter } from "events";
 export interface Route {
-    method: string;
+    name: string;
+    method: Method;
     endpoint: string;
-    callback: Function;
-    middleware: Function;
+    callback: string;
+}
+export declare enum Method {
+    GET,
+    POST,
+    PUT,
+    PATCH,
+    DELETE,
 }
 export declare class Router extends EventEmitter {
     private basePath;
     private routes;
     private nodes;
-    constructor(path: any);
-    get(endpoint: any, func: any, middleware: any): void;
-    post(endpoint: any, func: any, middleware: any): void;
-    put(endpoint: any, func: any, middleware: any): void;
-    patch(endpoint: any, func: any, middleware: any): void;
-    destroy(endpoint: any, func: any, middleware: any): void;
-    group(endpoint: any, callback: any): void;
-    crud(endpoint: any, controller: any, callback: any): void;
+    constructor(path?: string);
+    get(name: string, endpoint: string, func: string): void;
+    post(name: string, endpoint: string, func: string): void;
+    put(name: string, endpoint: string, func: string): void;
+    patch(name: string, endpoint: string, func: string): void;
+    destroy(name: string, endpoint: string, func: string): void;
+    group(endpoint: any, callback: (r: Router) => any): void;
+    crud(name: any, endpoint: any, controller: any, callback: any): void;
     getPath(endpoint: any): string;
-    addRoute(method: any, endpoint: any, func: any, middleware?: any): void;
+    addRoute(method: Method, name: string, endpoint: string, func: string): void;
     init(app: any, controllers: any): void;
+    getRoute(name: string): Route;
     print(): void;
 }

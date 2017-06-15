@@ -5,47 +5,54 @@ import {WebError} from "./error";
 
 export interface Route {
 
-	method: string;
-	endpoint: string,
-	callback: Function,
-	middleware: Function
+	name: string;
+	method: Method;
+	endpoint: string;
+	callback: string;
+}
+
+export enum Method {
+
+	GET = 'get' as any,
+	POST = 'post' as any,
+	PUT = 'put' as any,
+	PATCH = 'patch' as any,
+	DELETE = 'delete' as any,
 
 }
 
 export class Router extends EventEmitter {
 
 	private basePath: string;
-	private routes: Route[];
-	private nodes: Router[];
+	private routes: Route[] = [];
+	private nodes: Router[] = [];
 
-	constructor(path) {
+	constructor(path = '') {
 		super();
-		this.basePath = path || '';
-		this.routes = [];
-		this.nodes = [];
+		this.basePath = path;
 	}
 
-	get(endpoint, func, middleware) {
-		this.addRoute('GET', endpoint, func, middleware);
+	get(name: string, endpoint: string, func: string) {
+		this.addRoute(Method.GET, name, endpoint, func);
 	}
 
-	post(endpoint, func, middleware) {
-		this.addRoute('POST', endpoint, func, middleware);
+	post(name: string, endpoint: string, func: string) {
+		this.addRoute(Method.POST, name, endpoint, func);
 	}
 
-	put(endpoint, func, middleware) {
-		this.addRoute('PUT', endpoint, func, middleware);
+	put(name: string, endpoint: string, func: string) {
+		this.addRoute(Method.PUT, name, endpoint, func);
 	}
 
-	patch(endpoint, func, middleware) {
-		this.addRoute('PATCH', endpoint, func, middleware);
+	patch(name: string, endpoint: string, func: string) {
+		this.addRoute(Method.PATCH, name, endpoint, func);
 	}
 
-	destroy(endpoint, func, middleware) {
-		this.addRoute('DELETE', endpoint, func, middleware);
+	destroy(name: string, endpoint: string, func: string) {
+		this.addRoute(Method.DELETE, name, endpoint, func);
 	}
 
-	group(endpoint, callback) {
+	group(endpoint, callback: (r: Router) => any) {
 		let router = new Router(this.getPath(endpoint));
 		router.on('error', (err) => {
 			this.emit('error', err);
@@ -54,14 +61,14 @@ export class Router extends EventEmitter {
 		this.nodes.push(router);
 	}
 
-	crud(endpoint, controller, callback) {
+	crud(name, endpoint, controller, callback) {
 		this.group(endpoint, (router) => {
 
-			router.get('', controller + '.find');
-			router.get('/:id', controller + '.findOne');
-			router.post('', controller + '.create');
-			router.patch('/:id', controller + '.update');
-			router.destroy('/:id', controller + '.destroy');
+			router.get(`${name}.list`, '', `${controller}.find`);
+			router.get(`${name}.find`, '/:id', `${controller}.findOne`);
+			router.post(`${name}.create`, '', `${controller}.create`);
+			router.patch(`${name}.update`, '/:id', `${controller}.update`);
+			router.destroy(`${name}.destroy`, '/:id', `${controller}.destroy`);
 
 			if (callback) {
 				callback.call(null, router);
@@ -73,12 +80,12 @@ export class Router extends EventEmitter {
 		return path.join(this.basePath, endpoint);
 	}
 
-	addRoute(method, endpoint, func, middleware = null) {
+	addRoute(method: Method, name: string, endpoint: string, func: string) {
 		this.routes.push({
+			name: name,
 			method: method,
 			endpoint: endpoint,
-			callback: func,
-			middleware: middleware
+			callback: func
 		});
 	}
 
@@ -86,21 +93,33 @@ export class Router extends EventEmitter {
 		let router = this;
 		this.routes.forEach((route) => {
 
-			let method = route.method.toLowerCase();
 			let endpoint = router.getPath(route.endpoint);
 
 			let callback = createHandler(router, route, controllers);
 
-			if (route.middleware) {
-				app[method].call(app, endpoint, route.middleware, callback);
-			} else {
-				app[method].call(app, endpoint, callback);
-			}
+			app[route.method].call(app, endpoint, callback);
+
 		});
 
 		for (let i = 0; i < this.nodes.length; i++) {
 			this.nodes[i].init(app, controllers);
 		}
+	}
+
+	getRoute(name: string): Route{
+		let route = this.routes.find((route) => {
+			return route.name === name;
+		});
+		if (route) {
+			return route;
+		}
+		for (let i = 0; i < this.nodes.length; i++) {
+			let route = this.nodes[i].getRoute(name);
+			if (route) {
+				return route;
+			}
+		}
+		return null;
 	}
 
 	print() {

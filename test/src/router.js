@@ -39,7 +39,7 @@ describe('Router', () => {
 
 		let router = new Router('');
 
-		router.get('/', 'TestController.getSomething');
+		router.get('test.route', '/', 'TestController.getSomething');
 		router.on('error', (err) => {
 			should(err).property('message', 'Internal');
 			done();
@@ -62,7 +62,7 @@ describe('Router', () => {
 
 		router.group('/test', (router) => {
 
-			router.get('/this', 'TestController.getSomething')
+			router.get('test.route', '/this', 'TestController.getSomething')
 
 		});
 
@@ -80,6 +80,20 @@ describe('Router', () => {
 		});
 
 		fakeApp.trigger('get', '/test/this')
+
+	});
+
+	it('should get route by name', () => {
+
+		let router = new Router();
+		router.post('auth.login', '/auth', 'AuthController');
+		router.crud('user', '/user', 'UserController');
+
+		let route1 = router.getRoute('auth.login');
+		should(route1).property('endpoint', '/auth');
+
+		let route2 = router.getRoute('user.find');
+		should(route2).property('endpoint', '/user/:id');
 
 	});
 
