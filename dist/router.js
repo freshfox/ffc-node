@@ -61,16 +61,15 @@ class Router extends events_1.EventEmitter {
         this.routes.push({
             name: name,
             method: method,
-            endpoint: endpoint,
+            endpoint: this.getPath(endpoint),
             callback: func
         });
     }
     init(app, controllers) {
         let router = this;
         this.routes.forEach((route) => {
-            let endpoint = router.getPath(route.endpoint);
             let callback = createHandler(router, route, controllers);
-            app[route.method].call(app, endpoint, callback);
+            app[route.method].call(app, route.endpoint, callback);
         });
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].init(app, controllers);

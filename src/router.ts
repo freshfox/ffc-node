@@ -84,7 +84,7 @@ export class Router extends EventEmitter {
 		this.routes.push({
 			name: name,
 			method: method,
-			endpoint: endpoint,
+			endpoint: this.getPath(endpoint),
 			callback: func
 		});
 	}
@@ -93,11 +93,9 @@ export class Router extends EventEmitter {
 		let router = this;
 		this.routes.forEach((route) => {
 
-			let endpoint = router.getPath(route.endpoint);
-
 			let callback = createHandler(router, route, controllers);
 
-			app[route.method].call(app, endpoint, callback);
+			app[route.method].call(app, route.endpoint, callback);
 
 		});
 
