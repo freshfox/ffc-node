@@ -1,6 +1,6 @@
 {
   "name": "ffc-node",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "The Freshfox Core Node package",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -30,7 +30,8 @@
     "knex": "^0.13.0",
     "lodash": "^4.17.4",
     "mysql": "^2.13.0",
-    "node-env-file": "^0.1.8"
+    "node-env-file": "^0.1.8",
+    "supertest": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^7.0.29",
@@ -38,7 +39,6 @@
     "gulp-tsb": "^2.0.3",
     "mocha": "^3.4.2",
     "should": "^11.2.1",
-    "supertest": "^3.0.0",
     "typescript": "^2.3.4"
   }
 }
