@@ -22,5 +22,7 @@ var base_test_case_2 = require("./base_test_case");
 exports.BaseTestCase = base_test_case_2.BaseTestCase;
 var error_1 = require("./error");
 exports.WebError = error_1.WebError;
+var server_1 = require("./server");
+exports.Server = server_1.Server;
 __export(require("./router"));
 //# sourceMappingURL=index.js.map
