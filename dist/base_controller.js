@@ -37,5 +37,5 @@ class BaseController extends events_1.EventEmitter {
         };
     }
 }
-module.exports = BaseController;
+exports.BaseController = BaseController;
 //# sourceMappingURL=base_controller.js.map

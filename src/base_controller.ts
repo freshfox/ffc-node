@@ -3,7 +3,7 @@ import {EventEmitter} from "events";
 import {Sorting} from "./sorting";
 import {Pagination} from "./pagination";
 
-class BaseController extends EventEmitter {
+export class BaseController extends EventEmitter {
 
 	private defaultSortDirection: string = 'desc';
 	private defaultLimit: number = 999999;
@@ -41,6 +41,3 @@ class BaseController extends EventEmitter {
 	}
 
 }
-
-
-module.exports = BaseController;

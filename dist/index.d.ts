@@ -4,6 +4,7 @@ export declare class FFCore {
 }
 export { BaseRepository } from './base_repository';
 export { BaseTestCase } from './base_test_case';
+export { BaseController } from './base_controller';
 export { Pagination } from './pagination';
 export { WebError } from './error';
 export { Server } from './server';
