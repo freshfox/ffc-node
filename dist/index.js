@@ -12,7 +12,7 @@ class FFCore {
         let bookshelf = require('bookshelf')(knex);
         bookshelf.plugin(cascadeDelete);
         FFCore.Config = base_test_case_1.BaseTestCase.Config = config;
-        FFCore.Config.Bookshelf = base_repository_1.BaseRepository.Bookshelf = bookshelf;
+        FFCore.Bookshelf = FFCore.Config.Bookshelf = base_repository_1.BaseRepository.Bookshelf = bookshelf;
     }
 }
 exports.FFCore = FFCore;

@@ -4,6 +4,7 @@ import {BaseRepository} from "./base_repository";
 export class FFCore {
 
 	private static Config: any;
+	public static Bookshelf: any;
 
 	static configure(config) {
 		let knex = require('knex')(config.database);
@@ -13,7 +14,7 @@ export class FFCore {
 		bookshelf.plugin(cascadeDelete);
 
 		FFCore.Config = BaseTestCase.Config = config;
-		FFCore.Config.Bookshelf = BaseRepository.Bookshelf = bookshelf;
+		FFCore.Bookshelf = FFCore.Config.Bookshelf = BaseRepository.Bookshelf = bookshelf;
 
 	}
 }

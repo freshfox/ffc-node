@@ -12,7 +12,8 @@
     "node": "8.1.0"
   },
   "scripts": {
-    "test": "NODE_ENV=test mocha test/index.js test/src"
+    "test": "NODE_ENV=test mocha test/index.js test/src",
+    "build": "gulp"
   },
   "repository": {
     "type": "git",

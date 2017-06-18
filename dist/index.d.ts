@@ -1,5 +1,6 @@
 export declare class FFCore {
     private static Config;
+    static Bookshelf: any;
     static configure(config: any): void;
 }
 export { BaseRepository } from './base_repository';
