@@ -1,6 +1,5 @@
-const fs = require('fs');
-const request = require('supertest');
-const _ = require('lodash');
+import * as request from "supertest";
+import * as _ from "lodash";
 
 export class BaseTestCase {
 
@@ -52,7 +51,7 @@ export class BaseTestCase {
 	}
 
 	static _send(req) {
-		return new Promise(function(resolve, reject) {
+		return new Promise(function (resolve, reject) {
 
 			req.end(function (err, res) {
 				if (err) {
