@@ -44,8 +44,8 @@ class Router extends events_1.EventEmitter {
     }
     crud(name, endpoint, controller, callback) {
         this.group(endpoint, (router) => {
-            router.get(`${name}.list`, '', `${controller}.find`);
-            router.get(`${name}.find`, '/:id', `${controller}.findOne`);
+            router.get(`${name}.list`, '', `${controller}.list`);
+            router.get(`${name}.find`, '/:id', `${controller}.find`);
             router.post(`${name}.create`, '', `${controller}.create`);
             router.patch(`${name}.update`, '/:id', `${controller}.update`);
             router.destroy(`${name}.destroy`, '/:id', `${controller}.destroy`);

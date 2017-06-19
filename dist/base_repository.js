@@ -49,7 +49,7 @@ class BaseRepository extends events_1.EventEmitter {
         return this.find(attributes)
             .then((model) => {
             if (!model) {
-                throw error_1.WebError.notFound(`Model not found in ${this.tableName}(#${attributes ? attributes.id : ''})`);
+                throw error_1.WebError.notFound(`Model not found in ${this.tableName}(#${attributes ? JSON.stringify(attributes) : ''})`);
             }
             return model;
         });
@@ -71,7 +71,7 @@ class BaseRepository extends events_1.EventEmitter {
      * @param {Object} [options] - Some query options for knex
      * @returns {Promise}
      */
-    query(filter, options = null) {
+    query(filter, options) {
         return this.model.collection()
             .query(filter)
             .fetch({

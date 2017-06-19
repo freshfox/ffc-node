@@ -3,6 +3,7 @@ import * as BPromise from "bluebird";
 import * as _ from 'lodash';
 import {WebError} from "./error";
 import {Pagination} from "./pagination";
+import {Sorting} from "./sorting";
 
 /**
  * A base repository to access the database of a given model
@@ -34,7 +35,7 @@ export class BaseRepository extends EventEmitter {
 	 * @param {Object} attributes - Object of attributes which the model must have
 	 * @returns {Promise<T>}
 	 */
-	find(attributes) {
+	find(attributes: any) {
 		return this.model.forge(attributes)
 			.fetch({withRelated: this.model.load})
 			.then(function (model) {
@@ -50,11 +51,11 @@ export class BaseRepository extends EventEmitter {
 	 * @param {Object} attributes - Object of attributes which the model must have
 	 * @returns {Promise<T>}
 	 */
-	findOrThrow(attributes) {
+	findOrThrow(attributes: any) {
 		return this.find(attributes)
 			.then((model) => {
 				if (!model) {
-					throw WebError.notFound(`Model not found in ${this.tableName}(#${attributes ? attributes.id : ''})`);
+					throw WebError.notFound(`Model not found in ${this.tableName}(#${attributes ? JSON.stringify(attributes) : ''})`);
 				}
 				return model
 			});
@@ -68,7 +69,7 @@ export class BaseRepository extends EventEmitter {
 	 * @param {Object} [options] - Some query options
 	 * @returns {Promise}
 	 */
-	list(attributes, order, pagination, options) {
+	list(attributes?: any, order?: Sorting, pagination?: Pagination, options?: any) {
 		return this.query(this.createQuery(attributes, order, pagination), options);
 	}
 
@@ -78,7 +79,7 @@ export class BaseRepository extends EventEmitter {
 	 * @param {Object} [options] - Some query options for knex
 	 * @returns {Promise}
 	 */
-	query(filter, options = null) {
+	query(filter: any, options?: any) {
 		return this.model.collection()
 			.query(filter)
 			.fetch({
@@ -92,7 +93,7 @@ export class BaseRepository extends EventEmitter {
 			});
 	}
 
-	count(attributes) {
+	count(attributes?: any) {
 		return this.model.forge()
 			.query()
 			.where(attributes || {})
@@ -142,7 +143,7 @@ export class BaseRepository extends EventEmitter {
 	 * @param {Pagination} pagination
 	 * @returns {Object}
 	 */
-	createQuery(attributes, order, pagination: Pagination) {
+	createQuery(attributes?: Object, order?: Sorting, pagination?: Pagination) {
 		let filter = attributes ? {where: attributes} : {} as any;
 		if (order) {
 			filter.orderBy = [order.column, order.direction];
@@ -158,7 +159,7 @@ export class BaseRepository extends EventEmitter {
 		return filter;
 	};
 
-	associate(withRepo, accountId, baseModelId, withModelId, resolveData) {
+	associate(withRepo: BaseRepository, accountId, baseModelId, withModelId, resolveData) {
 		let self = this;
 		let data;
 		let relation;
@@ -193,7 +194,7 @@ export class BaseRepository extends EventEmitter {
 			});
 	}
 
-	dissociate(withRepo, accountId, baseModelId, withModelId) {
+	dissociate(withRepo: BaseRepository, accountId, baseModelId, withModelId) {
 
 		return BPromise.props({
 			baseModel: this.findOrThrow({id: baseModelId, account_id: accountId}),
@@ -211,7 +212,7 @@ export class BaseRepository extends EventEmitter {
 
 	}
 
-	listBetween(accountId, from, to, order, pagination, column = 'date') {
+	listBetween(accountId, from, to, order?: Sorting, pagination?: Pagination, column = 'date') {
 		let query = this.createQuery({
 			account_id: accountId
 		}, order, pagination);

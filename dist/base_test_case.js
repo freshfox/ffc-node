@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require('fs');
-const request = require('supertest');
-const _ = require('lodash');
+const request = require("supertest");
+const _ = require("lodash");
 class BaseTestCase {
     static init(context, useServer, useDatabase) {
         if (useServer) {

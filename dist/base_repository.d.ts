@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { EventEmitter } from "events";
 import { Pagination } from "./pagination";
+import { Sorting } from "./sorting";
 /**
  * A base repository to access the database of a given model
  * @param model The bookshelf model
@@ -37,7 +38,7 @@ export declare class BaseRepository extends EventEmitter {
      * @param {Object} [options] - Some query options
      * @returns {Promise}
      */
-    list(attributes: any, order: any, pagination: any, options: any): any;
+    list(attributes?: any, order?: Sorting, pagination?: Pagination, options?: any): any;
     /**
      * List all models filtered by given {attributes}
      * @param {Object} filter - A filter object which knex can handle
@@ -45,7 +46,7 @@ export declare class BaseRepository extends EventEmitter {
      * @returns {Promise}
      */
     query(filter: any, options?: any): any;
-    count(attributes: any): any;
+    count(attributes?: any): any;
     /**
      * Create or update(partial) a model
      * @param {Object} data - An object of the attributes to be saved
@@ -66,8 +67,8 @@ export declare class BaseRepository extends EventEmitter {
      * @param {Pagination} pagination
      * @returns {Object}
      */
-    createQuery(attributes: any, order: any, pagination: Pagination): any;
-    associate(withRepo: any, accountId: any, baseModelId: any, withModelId: any, resolveData: any): any;
-    dissociate(withRepo: any, accountId: any, baseModelId: any, withModelId: any): any;
-    listBetween(accountId: any, from: any, to: any, order: any, pagination: any, column?: string): any;
+    createQuery(attributes?: Object, order?: Sorting, pagination?: Pagination): any;
+    associate(withRepo: BaseRepository, accountId: any, baseModelId: any, withModelId: any, resolveData: any): any;
+    dissociate(withRepo: BaseRepository, accountId: any, baseModelId: any, withModelId: any): any;
+    listBetween(accountId: any, from: any, to: any, order?: Sorting, pagination?: Pagination, column?: string): any;
 }
