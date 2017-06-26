@@ -28,10 +28,12 @@
     "bookshelf-cascade-delete": "^2.0.1",
     "checkit": "^0.7.0",
     "cnfg": "^1.2.0",
+    "inversify": "^4.1.1",
     "knex": "^0.13.0",
     "lodash": "^4.17.4",
     "mysql": "^2.13.0",
     "node-env-file": "^0.1.8",
+    "reflect-metadata": "^0.1.10",
     "supertest": "^3.0.0"
   },
   "devDependencies": {

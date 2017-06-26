@@ -9,10 +9,13 @@
 		],
 		"types": [
 			// add node as an option
-			"node"
+			"node",
+			"reflect-metadata"
 		],
 		"sourceMap": true,
-		"rootDir": "./src"
+		"rootDir": "./src",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
 	},
 	"exclude": [
 		"node_modules"

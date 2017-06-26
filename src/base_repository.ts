@@ -4,19 +4,30 @@ import * as _ from 'lodash';
 import {WebError} from "./error";
 import {Pagination} from "./pagination";
 import {Sorting} from "./sorting";
+import {injectable, unmanaged} from 'inversify';
+
+export interface BaseModel {
+
+	tableName: string
+
+	new(): BaseModel;
+	forge(args?: any): BaseModel;
+	fetch(): Promise<BaseModel>
+}
 
 /**
  * A base repository to access the database of a given model
  * @param model The bookshelf model
  * @constructor
  */
-export class BaseRepository extends EventEmitter {
+@injectable()
+export class BaseRepository<T extends BaseModel> extends EventEmitter {
 
 	static Bookshelf: any;
 
 	private tableName: string;
 
-	constructor(private model: any) {
+	constructor(@unmanaged() private model: BaseModel) {
 		super();
 		this.tableName = this.model.forge().tableName;
 	}
