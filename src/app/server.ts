@@ -1,11 +1,13 @@
 import * as http from "http";
 
-export class Server {
+export abstract class Server {
 
-	private server: any;
+	protected server: any;
 
-	constructor(private app: any, private port: number) {
+	constructor(protected app: any, protected port: number) {
 	}
+
+	abstract configure();
 
 	start() {
 		return new Promise((resolve) => {
