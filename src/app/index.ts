@@ -16,7 +16,7 @@ export class FFCore {
 
 		this.Config = TestCase.Config = config;
 		this.Bookshelf = FFCore.Config.Bookshelf = BaseRepository.Bookshelf = bookshelf;
-		this.BaseModel = require('./base_model');
+		this.BaseModel = require('./base_model').BaseModel;
 	}
 }
 

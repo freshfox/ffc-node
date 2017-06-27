@@ -13,7 +13,7 @@ class FFCore {
         bookshelf.plugin(cascadeDelete);
         this.Config = test_case_1.TestCase.Config = config;
         this.Bookshelf = FFCore.Config.Bookshelf = base_repository_1.BaseRepository.Bookshelf = bookshelf;
-        this.BaseModel = require('./base_model');
+        this.BaseModel = require('./base_model').BaseModel;
     }
 }
 exports.FFCore = FFCore;
