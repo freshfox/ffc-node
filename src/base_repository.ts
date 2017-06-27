@@ -5,6 +5,7 @@ import {WebError} from "./error";
 import {Pagination} from "./pagination";
 import {Sorting} from "./sorting";
 import {injectable, unmanaged} from 'inversify';
+import "reflect-metadata";
 
 /**
  * A base repository to access the database of a given model
