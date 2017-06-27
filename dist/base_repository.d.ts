@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import { EventEmitter } from "events";
+import * as BPromise from "bluebird";
 import { Pagination } from "./pagination";
 import { Sorting } from "./sorting";
 /**
@@ -7,10 +8,15 @@ import { Sorting } from "./sorting";
  * @param model The bookshelf model
  * @constructor
  */
-export declare class BaseRepository extends EventEmitter {
+export interface IModelBase {
+    tableName: string;
+    load: string[];
+}
+export declare class BaseRepository<T extends IModelBase> extends EventEmitter {
     private model;
     static Bookshelf: any;
     private tableName;
+    private modelInstance;
     constructor(model: any);
     /**
      * Find one model by its id
@@ -68,7 +74,7 @@ export declare class BaseRepository extends EventEmitter {
      * @returns {Object}
      */
     createQuery(attributes?: Object, order?: Sorting, pagination?: Pagination): any;
-    associate(withRepo: BaseRepository, accountId: any, baseModelId: any, withModelId: any, resolveData: any): any;
-    dissociate(withRepo: BaseRepository, accountId: any, baseModelId: any, withModelId: any): any;
+    associate<U extends IModelBase>(withRepo: BaseRepository<U>, accountId: any, baseModelId: any, withModelId: any, resolveData: any): BPromise<any>;
+    dissociate<U extends IModelBase>(withRepo: BaseRepository<U>, accountId: any, baseModelId: any, withModelId: any): BPromise<any>;
     listBetween(accountId: any, from: any, to: any, order?: Sorting, pagination?: Pagination, column?: string): any;
 }

@@ -1,3 +1,4 @@
+import * as BPromise from 'bluebird';
 export declare class Validator {
     /**
      * Validates a given data set against the rules
@@ -5,7 +6,7 @@ export declare class Validator {
      * @param data
      * @return {Promise}
      */
-    static validate(rules: any, data: any): any;
+    static validate(rules: any, data: any): BPromise<{}>;
     static register(name: any, callback: any): void;
     private static createError(err);
 }

@@ -1,19 +1,28 @@
 "use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
 const BPromise = require("bluebird");
 const _ = require("lodash");
 const error_1 = require("./error");
-/**
- * A base repository to access the database of a given model
- * @param model The bookshelf model
- * @constructor
- */
-class BaseRepository extends events_1.EventEmitter {
+const inversify_1 = require("inversify");
+let BaseRepository = class BaseRepository extends events_1.EventEmitter {
     constructor(model) {
         super();
         this.model = model;
-        this.tableName = this.model.forge().tableName;
+        this.modelInstance = new this.model();
+        this.tableName = this.modelInstance.tableName;
     }
     /**
      * Find one model by its id
@@ -30,7 +39,7 @@ class BaseRepository extends events_1.EventEmitter {
      * @returns {Promise<T>}
      */
     find(attributes) {
-        return this.model.forge(attributes)
+        return new this.model(attributes)
             .fetch({ withRelated: this.model.load })
             .then(function (model) {
             if (!model) {
@@ -203,7 +212,12 @@ class BaseRepository extends events_1.EventEmitter {
         query.whereBetween = [column, [from, to]];
         return this.query(query);
     }
-}
+};
+BaseRepository = __decorate([
+    inversify_1.injectable(),
+    __param(0, inversify_1.unmanaged()),
+    __metadata("design:paramtypes", [Object])
+], BaseRepository);
 exports.BaseRepository = BaseRepository;
 function save(model, data) {
     // Extract child objects and arrays
@@ -218,7 +232,7 @@ function save(model, data) {
     })
         .then(function (savedModel) {
         let relationPromises = [];
-        _.forOwn(relations, function (value, key) {
+        _.forOwn(relations, (value, key) => {
             let relation = savedModel.related(key);
             let relationIds = [];
             if (relation instanceof BaseRepository.Bookshelf.Collection) {

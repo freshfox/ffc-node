@@ -2,12 +2,12 @@ const Bookshelf = require('../../dist').FFCore.Config.Bookshelf;
 
 class Post extends Bookshelf.Model {
 
-	//noinspection JSMethodCanBeStatic
+	//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
 	get tableName() {
 		return 'posts';
 	}
 
-	//noinspection JSMethodCanBeStatic
+	//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
 	get hasTimestamps() {
 		return true;
 	}

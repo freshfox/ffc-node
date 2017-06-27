@@ -23,6 +23,7 @@
   "license": "UNLICENSED",
   "homepage": "https://bitbucket.org/freshfox/ffc-node#readme",
   "dependencies": {
+    "@types/bookshelf": "^0.9.3",
     "bluebird": "^3.5.0",
     "bookshelf": "^0.10.3",
     "bookshelf-cascade-delete": "^2.0.1",

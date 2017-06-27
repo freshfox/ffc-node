@@ -3,12 +3,12 @@ const Post = require('./post_model');
 
 class User extends Bookshelf.Model {
 
-	//noinspection JSMethodCanBeStatic
+	//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
 	get tableName() {
 		return 'users';
 	}
 
-	//noinspection JSMethodCanBeStatic
+	//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
 	get hasTimestamps() {
 		return true;
 	}

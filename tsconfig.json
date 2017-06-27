@@ -10,7 +10,8 @@
 		"types": [
 			// add node as an option
 			"node",
-			"reflect-metadata"
+			"reflect-metadata",
+			"bookshelf"
 		],
 		"sourceMap": true,
 		"rootDir": "./src",

@@ -6,30 +6,32 @@ import {Pagination} from "./pagination";
 import {Sorting} from "./sorting";
 import {injectable, unmanaged} from 'inversify';
 
-export interface BaseModel {
-
-	tableName: string
-
-	new(): BaseModel;
-	forge(args?: any): BaseModel;
-	fetch(): Promise<BaseModel>
-}
-
 /**
  * A base repository to access the database of a given model
  * @param model The bookshelf model
  * @constructor
  */
+
+export interface IModelBase {
+
+	tableName: string;
+	load: string[];
+
+}
+
 @injectable()
-export class BaseRepository<T extends BaseModel> extends EventEmitter {
+export class BaseRepository<T extends IModelBase> extends EventEmitter {
 
 	static Bookshelf: any;
 
 	private tableName: string;
+	private modelInstance: T;
 
-	constructor(@unmanaged() private model: BaseModel) {
+
+	constructor(@unmanaged() private model : any) {
 		super();
-		this.tableName = this.model.forge().tableName;
+		this.modelInstance = new this.model();
+		this.tableName = this.modelInstance.tableName;
 	}
 
 	/**
@@ -47,7 +49,7 @@ export class BaseRepository<T extends BaseModel> extends EventEmitter {
 	 * @returns {Promise<T>}
 	 */
 	find(attributes: any) {
-		return this.model.forge(attributes)
+		return new this.model(attributes)
 			.fetch({withRelated: this.model.load})
 			.then(function (model) {
 				if (!model) {
@@ -170,7 +172,7 @@ export class BaseRepository<T extends BaseModel> extends EventEmitter {
 		return filter;
 	};
 
-	associate(withRepo: BaseRepository, accountId, baseModelId, withModelId, resolveData) {
+	associate<U extends IModelBase>(withRepo: BaseRepository<U>, accountId, baseModelId, withModelId, resolveData) {
 		let self = this;
 		let data;
 		let relation;
@@ -205,7 +207,7 @@ export class BaseRepository<T extends BaseModel> extends EventEmitter {
 			});
 	}
 
-	dissociate(withRepo: BaseRepository, accountId, baseModelId, withModelId) {
+	dissociate<U extends IModelBase>(withRepo: BaseRepository<U>, accountId, baseModelId, withModelId) {
 
 		return BPromise.props({
 			baseModel: this.findOrThrow({id: baseModelId, account_id: accountId}),
@@ -248,7 +250,7 @@ function save(model, data) {
 		})
 		.then(function (savedModel) {
 			let relationPromises = [];
-			_.forOwn(relations, function (value, key) {
+			_.forOwn(relations, (value: any, key) => {
 				let relation = savedModel.related(key);
 				let relationIds = [];
 				if (relation instanceof BaseRepository.Bookshelf.Collection) {
