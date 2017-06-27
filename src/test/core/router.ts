@@ -1,5 +1,5 @@
-const should = require('should');
-const Router = require('../../dist/router').Router;
+import {Router} from '../../app/router';
+import * as should from 'should';
 
 const fakeResponse = {
 
@@ -15,11 +15,17 @@ const fakeResponse = {
 
 const fakeApp = {
 
-	get(){this.addRoute.apply(this, ['get', ...arguments])},
-	post(){},
-	patch(){},
-	delete(){},
-	put(){},
+	get(){
+		this.addRoute.apply(this, ['get', ...arguments])
+	},
+	post(){
+	},
+	patch(){
+	},
+	delete(){
+	},
+	put(){
+	},
 	addRoute(method, path, callback) {
 		this.routes = this.routes || {};
 		this.routes[this.format(method, path)] = callback;

@@ -1,5 +1,6 @@
 let gulp = require('gulp');
 let tsb = require('gulp-tsb');
+let clean = require('gulp-clean');
 
 // TypeScript build for /src folder
 let tsConfigSrc = tsb.create('tsconfig.json');
@@ -15,4 +16,9 @@ gulp.task('watch', function () {
 	gulp.watch('src/**/*.ts', ['build']);
 });
 
-gulp.task('default', ['build']);
+gulp.task('clean', function () {
+	return gulp.src('./dist', {read: false})
+		.pipe(clean());
+});
+
+gulp.task('default', ['clean', 'build']);

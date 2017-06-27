@@ -1,12 +1,57 @@
-const should = require('should');
-const TestCase = require('../test_case');
-const BaseRepository = require('../../dist').BaseRepository;
-
-const userRepo = new BaseRepository(require('../common/user_model'));
+import {BaseRepository} from '../../app/base_repository';
+import {FFCore} from '../../app/index';
+import {BaseTestCase} from '../../app/base_test_case';
+import * as should from 'should';
 
 describe('BaseRepository', function () {
 
-	TestCase.init(this, false, true);
+	class User extends FFCore.Bookshelf.Model {
+
+		//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
+		get tableName() {
+			return 'users';
+		}
+
+		//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
+		get hasTimestamps() {
+			return true;
+		}
+
+		posts() {
+			return this.hasMany(Post);
+		}
+
+		static get load() {
+			return ['posts'];
+		}
+
+	}
+
+	class Post extends FFCore.Bookshelf.Model {
+
+		//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
+		get tableName() {
+			return 'posts';
+		}
+
+		//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
+		get hasTimestamps() {
+			return true;
+		}
+
+	}
+
+	class UserRepo extends BaseRepository<any> {
+
+		constructor() {
+			super(User);
+		}
+
+	}
+
+	const userRepo = new UserRepo();
+
+	BaseTestCase.init(this, false, true);
 
 	it('should save model', () => {
 

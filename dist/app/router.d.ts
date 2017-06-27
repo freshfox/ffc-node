@@ -24,7 +24,7 @@ export declare class Router extends EventEmitter {
     patch(name: string, endpoint: string, func: string): void;
     destroy(name: string, endpoint: string, func: string): void;
     group(endpoint: any, callback: (r: Router) => any): void;
-    crud(name: any, endpoint: any, controller: any, callback: any): void;
+    crud(name: any, endpoint: any, controller: any, callback?: Function): void;
     getPath(endpoint: any): string;
     addRoute(method: Method, name: string, endpoint: string, func: string): void;
     init(app: any, controllers: any): void;

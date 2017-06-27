@@ -61,7 +61,7 @@ export class Router extends EventEmitter {
 		this.nodes.push(router);
 	}
 
-	crud(name, endpoint, controller, callback) {
+	crud(name, endpoint, controller, callback?: Function) {
 		this.group(endpoint, (router) => {
 
 			router.get(`${name}.list`, '', `${controller}.list`);
