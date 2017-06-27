@@ -5,6 +5,7 @@ export class FFCore {
 
 	private static Config: any;
 	public static Bookshelf: any;
+	private static BaseModel;
 
 	static configure(config: FFCoreConfig) {
 		let knex = require('knex')(config.database);
@@ -15,7 +16,7 @@ export class FFCore {
 
 		this.Config = TestCase.Config = config;
 		this.Bookshelf = FFCore.Config.Bookshelf = BaseRepository.Bookshelf = bookshelf;
-
+		this.BaseModel = require('./base_model');
 	}
 }
 
