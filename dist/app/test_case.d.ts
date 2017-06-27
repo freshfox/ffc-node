@@ -1,4 +1,4 @@
-export declare class BaseTestCase {
+export declare class TestCase {
     static Config: any;
     static Server: any;
     static init(context: any, useServer: any, useDatabase: any): void;

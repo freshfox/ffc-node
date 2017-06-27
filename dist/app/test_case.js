@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const request = require("supertest");
 const _ = require("lodash");
-class BaseTestCase {
+class TestCase {
     static init(context, useServer, useDatabase) {
         if (useServer) {
-            context.beforeEach(function () {
+            context.beforeEach(() => {
                 return this._startServer();
             });
             context.afterEach(() => {
-                const app = BaseTestCase.Server;
+                const app = this.Server;
                 return app.stop();
             });
         }
@@ -20,7 +20,7 @@ class BaseTestCase {
         }
     }
     static request() {
-        return request(BaseTestCase.Server);
+        return request(this.Server);
     }
     static get(path) {
         return this.request().get(path);
@@ -54,12 +54,12 @@ class BaseTestCase {
     }
     static _startServer() {
         return this._createDatabase()
-            .then(function () {
-            return BaseTestCase.Server.start();
+            .then(() => {
+            return this.Server.start();
         });
     }
     static _createDatabase() {
-        let config = BaseTestCase.Config.database;
+        let config = this.Config.database;
         let name = config.connection.database;
         let knex = require('knex')({
             client: 'mysql',
@@ -90,5 +90,5 @@ class BaseTestCase {
         };
     }
 }
-exports.BaseTestCase = BaseTestCase;
-//# sourceMappingURL=base_test_case.js.map
+exports.TestCase = TestCase;
+//# sourceMappingURL=test_case.js.map

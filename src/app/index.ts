@@ -1,4 +1,4 @@
-import {BaseTestCase} from "./base_test_case";
+import {TestCase} from "./test_case";
 import {BaseRepository} from "./base_repository";
 
 export class FFCore {
@@ -13,7 +13,7 @@ export class FFCore {
 
 		bookshelf.plugin(cascadeDelete);
 
-		this.Config = BaseTestCase.Config = config;
+		this.Config = TestCase.Config = config;
 		this.Bookshelf = FFCore.Config.Bookshelf = BaseRepository.Bookshelf = bookshelf;
 
 	}
@@ -26,7 +26,7 @@ export interface FFCoreConfig {
 }
 
 export { BaseRepository } from './base_repository';
-export { BaseTestCase } from './base_test_case';
+export { TestCase } from './test_case';
 export { BaseController } from './base_controller';
 export { Pagination } from './pagination';
 export { WebError } from './error';

@@ -1,18 +1,18 @@
 import * as request from "supertest";
 import * as _ from "lodash";
 
-export class BaseTestCase {
+export class TestCase {
 
 	public static Config: any;
 	public static Server: any;
 
 	static init(context, useServer, useDatabase) {
 		if (useServer) {
-			context.beforeEach(function () {
+			context.beforeEach(() => {
 				return this._startServer();
 			});
 			context.afterEach(() => {
-				const app = BaseTestCase.Server;
+				const app = this.Server;
 				return app.stop();
 			});
 		} else if (useDatabase) {
@@ -23,7 +23,7 @@ export class BaseTestCase {
 	}
 
 	static request() {
-		return request(BaseTestCase.Server);
+		return request(this.Server);
 	}
 
 	static get(path) {
@@ -65,13 +65,13 @@ export class BaseTestCase {
 
 	static _startServer() {
 		return this._createDatabase()
-			.then(function () {
-				return BaseTestCase.Server.start();
+			.then(() => {
+				return this.Server.start();
 			});
 	}
 
 	private static _createDatabase() {
-		let config = BaseTestCase.Config.database;
+		let config = this.Config.database;
 		let name = config.connection.database;
 
 		let knex = require('knex')({

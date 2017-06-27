@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const base_repository_1 = require("../../app/base_repository");
 const index_1 = require("../../app/index");
-const base_test_case_1 = require("../../app/base_test_case");
+const test_case_1 = require("../../app/test_case");
 const should = require("should");
 describe('BaseRepository', function () {
     class User extends index_1.FFCore.Bookshelf.Model {
@@ -37,7 +37,7 @@ describe('BaseRepository', function () {
         }
     }
     const userRepo = new UserRepo();
-    base_test_case_1.BaseTestCase.init(this, false, true);
+    test_case_1.TestCase.init(this, false, true);
     it('should save model', () => {
         let data = {
             firstname: 'Max',

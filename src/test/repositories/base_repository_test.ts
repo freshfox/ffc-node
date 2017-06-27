@@ -1,6 +1,6 @@
 import {BaseRepository} from '../../app/base_repository';
 import {FFCore} from '../../app/index';
-import {BaseTestCase} from '../../app/base_test_case';
+import {TestCase} from '../../app/test_case';
 import * as should from 'should';
 
 describe('BaseRepository', function () {
@@ -51,7 +51,7 @@ describe('BaseRepository', function () {
 
 	const userRepo = new UserRepo();
 
-	BaseTestCase.init(this, false, true);
+	TestCase.init(this, false, true);
 
 	it('should save model', () => {
 
