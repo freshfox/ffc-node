@@ -6,7 +6,7 @@ class TestCase {
     static init(context, useServer, useDatabase) {
         if (useServer) {
             context.beforeEach(() => {
-                return this._startServer();
+                return this.startServer();
             });
             context.afterEach(() => {
                 const app = this.server;
@@ -15,7 +15,7 @@ class TestCase {
         }
         else if (useDatabase) {
             context.beforeEach(() => {
-                return this._createDatabase();
+                return this.createDatabase();
             });
         }
     }
@@ -52,13 +52,13 @@ class TestCase {
             });
         });
     }
-    static _startServer() {
-        return this._createDatabase()
+    static startServer() {
+        return this.createDatabase()
             .then(() => {
             return this.server.start();
         });
     }
-    static _createDatabase() {
+    static createDatabase() {
         let config = this.Config.database;
         let name = config.connection.database;
         let knex = require('knex')({
@@ -78,7 +78,7 @@ class TestCase {
             return knex.migrate.latest();
         })
             .then(function () {
-            //return knex.seed.run();
+            return knex.seed.run();
         });
     }
     static send(req, auth) {

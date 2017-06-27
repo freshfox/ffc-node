@@ -11,8 +11,8 @@ export declare class TestCase {
     static destroy(path: any): any;
     static file(path: any, file: any, fieldName?: string): any;
     static _send(req: any): Promise<{}>;
-    static _startServer(): any;
-    private static _createDatabase();
+    protected static startServer(): any;
+    protected static createDatabase(): any;
     static send(req: any, auth: any): Promise<{}>;
     static shouldNotHappen(msg?: string): (err: any) => never;
 }
