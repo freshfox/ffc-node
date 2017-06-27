@@ -1,7 +1,7 @@
 export declare class FFCore {
     private static Config;
     static Bookshelf: any;
-    private static BaseModel;
+    static BaseModel: any;
     static configure(config: FFCoreConfig): void;
 }
 export interface FFCoreConfig {

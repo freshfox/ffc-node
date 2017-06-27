@@ -5,7 +5,7 @@ export class FFCore {
 
 	private static Config: any;
 	public static Bookshelf: any;
-	private static BaseModel;
+	public static BaseModel;
 
 	static configure(config: FFCoreConfig) {
 		let knex = require('knex')(config.database);
