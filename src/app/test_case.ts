@@ -1,10 +1,11 @@
 import * as request from "supertest";
 import * as _ from "lodash";
+import {Server} from './server';
 
 export class TestCase {
 
 	public static Config: any;
-	public static Server: any;
+	public static server: Server;
 
 	static init(context, useServer, useDatabase) {
 		if (useServer) {
@@ -12,7 +13,7 @@ export class TestCase {
 				return this._startServer();
 			});
 			context.afterEach(() => {
-				const app = this.Server;
+				const app = this.server;
 				return app.stop();
 			});
 		} else if (useDatabase) {
@@ -23,7 +24,7 @@ export class TestCase {
 	}
 
 	static request() {
-		return request(this.Server);
+		return request(this.server.app);
 	}
 
 	static get(path) {
@@ -66,7 +67,7 @@ export class TestCase {
 	static _startServer() {
 		return this._createDatabase()
 			.then(() => {
-				return this.Server.start();
+				return this.server.start();
 			});
 	}
 

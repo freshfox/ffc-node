@@ -4,12 +4,13 @@ export abstract class Server {
 
 	protected server: any;
 
-	constructor(protected app: any, protected port: number) {
+	constructor(public app: any, protected port: number) {
 	}
 
 	abstract configure();
 
 	start() {
+		this.configure();
 		return new Promise((resolve) => {
 			let self = this;
 			let server = http.createServer(this.app);

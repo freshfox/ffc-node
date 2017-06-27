@@ -1,6 +1,7 @@
+import { Server } from './server';
 export declare class TestCase {
     static Config: any;
-    static Server: any;
+    static server: Server;
     static init(context: any, useServer: any, useDatabase: any): void;
     static request(): any;
     static get(path: any): any;

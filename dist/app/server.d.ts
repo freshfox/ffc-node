@@ -1,5 +1,5 @@
 export declare abstract class Server {
-    protected app: any;
+    app: any;
     protected port: number;
     protected server: any;
     constructor(app: any, port: number);

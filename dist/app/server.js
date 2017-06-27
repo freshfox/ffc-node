@@ -7,6 +7,7 @@ class Server {
         this.port = port;
     }
     start() {
+        this.configure();
         return new Promise((resolve) => {
             let self = this;
             let server = http.createServer(this.app);

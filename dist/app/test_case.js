@@ -9,7 +9,7 @@ class TestCase {
                 return this._startServer();
             });
             context.afterEach(() => {
-                const app = this.Server;
+                const app = this.server;
                 return app.stop();
             });
         }
@@ -20,7 +20,7 @@ class TestCase {
         }
     }
     static request() {
-        return request(this.Server);
+        return request(this.server.app);
     }
     static get(path) {
         return this.request().get(path);
@@ -55,7 +55,7 @@ class TestCase {
     static _startServer() {
         return this._createDatabase()
             .then(() => {
-            return this.Server.start();
+            return this.server.start();
         });
     }
     static _createDatabase() {
