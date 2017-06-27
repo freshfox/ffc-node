@@ -10,6 +10,7 @@
 		"types": [
 			// add node as an option
 			"node",
+			"mocha",
 			"reflect-metadata",
 			"bookshelf"
 		],

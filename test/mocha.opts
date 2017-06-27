@@ -1,2 +1,2 @@
 --recursive
--r test/index.js
+--require ./dist/test/index.js
