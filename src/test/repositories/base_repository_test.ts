@@ -1,11 +1,12 @@
 import {BaseRepository} from '../../app/base_repository';
-import {FFCore} from '../../app/index';
 import {TestCase} from '../../app/test_case';
 import * as should from 'should';
+import {BaseModel} from '../../app/base_model';
+import Base = Mocha.reporters.Base;
 
 describe('BaseRepository', function () {
 
-	class User extends FFCore.Bookshelf.Model {
+	class User extends BaseModel {
 
 		//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
 		get tableName() {
@@ -21,13 +22,13 @@ describe('BaseRepository', function () {
 			return this.hasMany(Post);
 		}
 
-		static get load() {
+		static get loadEager() {
 			return ['posts'];
 		}
 
 	}
 
-	class Post extends FFCore.Bookshelf.Model {
+	class Post extends BaseModel {
 
 		//noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
 		get tableName() {

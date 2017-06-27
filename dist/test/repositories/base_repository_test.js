@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const base_repository_1 = require("../../app/base_repository");
-const index_1 = require("../../app/index");
 const test_case_1 = require("../../app/test_case");
 const should = require("should");
+const base_model_1 = require("../../app/base_model");
 describe('BaseRepository', function () {
-    class User extends index_1.FFCore.Bookshelf.Model {
+    class User extends base_model_1.BaseModel {
         //noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
         get tableName() {
             return 'users';
@@ -17,11 +17,11 @@ describe('BaseRepository', function () {
         posts() {
             return this.hasMany(Post);
         }
-        static get load() {
+        static get loadEager() {
             return ['posts'];
         }
     }
-    class Post extends index_1.FFCore.Bookshelf.Model {
+    class Post extends base_model_1.BaseModel {
         //noinspection JSMethodCanBeStatic,JSUnusedGlobalSymbols
         get tableName() {
             return 'posts';

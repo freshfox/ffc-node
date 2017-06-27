@@ -6,6 +6,7 @@ import {WebError} from "./error";
 import {Pagination} from "./pagination";
 import {Sorting} from "./sorting";
 import {injectable, unmanaged} from 'inversify';
+import {BaseModel} from './base_model';
 
 
 /**
@@ -14,15 +15,8 @@ import {injectable, unmanaged} from 'inversify';
  * @constructor
  */
 
-export interface IModelBase {
-
-	tableName: string;
-	load: string[];
-
-}
-
 @injectable()
-export class BaseRepository<T extends IModelBase> extends EventEmitter {
+export class BaseRepository<T extends BaseModel> extends EventEmitter {
 
 	static Bookshelf: any;
 
@@ -52,7 +46,7 @@ export class BaseRepository<T extends IModelBase> extends EventEmitter {
 	 */
 	find(attributes: any) {
 		return new this.model(attributes)
-			.fetch({withRelated: this.model.load})
+			.fetch({withRelated: this.model.loadEager})
 			.then(function (model) {
 				if (!model) {
 					return;
@@ -98,7 +92,7 @@ export class BaseRepository<T extends IModelBase> extends EventEmitter {
 		return this.model.collection()
 			.query(filter)
 			.fetch({
-				withRelated: (options && options.withRelated) ? options.withRelated : this.model.load
+				withRelated: (options && options.withRelated) ? options.withRelated : this.model.loadEager
 			})
 			.then(function (models) {
 				if (!models) {
@@ -174,7 +168,7 @@ export class BaseRepository<T extends IModelBase> extends EventEmitter {
 		return filter;
 	};
 
-	associate<U extends IModelBase>(withRepo: BaseRepository<U>, accountId, baseModelId, withModelId, resolveData) {
+	associate<U extends BaseModel>(withRepo: BaseRepository<U>, accountId, baseModelId, withModelId, resolveData) {
 		let self = this;
 		let data;
 		let relation;
@@ -209,7 +203,7 @@ export class BaseRepository<T extends IModelBase> extends EventEmitter {
 			});
 	}
 
-	dissociate<U extends IModelBase>(withRepo: BaseRepository<U>, accountId, baseModelId, withModelId) {
+	dissociate<U extends BaseModel>(withRepo: BaseRepository<U>, accountId, baseModelId, withModelId) {
 
 		return BPromise.props({
 			baseModel: this.findOrThrow({id: baseModelId, account_id: accountId}),
@@ -296,7 +290,7 @@ function transformAndOmitAttachedObjects(model, data) {
 			attributes = _.omit(attributes, key);
 			attributes[key + '_id'] = value.id;
 		} else if (value === null) {
-			if (_.includes(model.load, key)) {
+			if (_.includes(model.loadEager, key)) {
 				attributes = _.omit(attributes, key);
 				attributes[key + '_id'] = null;
 			}

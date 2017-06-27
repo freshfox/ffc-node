@@ -18,6 +18,11 @@ const BPromise = require("bluebird");
 const _ = require("lodash");
 const error_1 = require("./error");
 const inversify_1 = require("inversify");
+/**
+ * A base repository to access the database of a given model
+ * @param model The bookshelf model
+ * @constructor
+ */
 let BaseRepository = class BaseRepository extends events_1.EventEmitter {
     constructor(model) {
         super();
@@ -41,7 +46,7 @@ let BaseRepository = class BaseRepository extends events_1.EventEmitter {
      */
     find(attributes) {
         return new this.model(attributes)
-            .fetch({ withRelated: this.model.load })
+            .fetch({ withRelated: this.model.loadEager })
             .then(function (model) {
             if (!model) {
                 return;
@@ -85,7 +90,7 @@ let BaseRepository = class BaseRepository extends events_1.EventEmitter {
         return this.model.collection()
             .query(filter)
             .fetch({
-            withRelated: (options && options.withRelated) ? options.withRelated : this.model.load
+            withRelated: (options && options.withRelated) ? options.withRelated : this.model.loadEager
         })
             .then(function (models) {
             if (!models) {
@@ -276,7 +281,7 @@ function transformAndOmitAttachedObjects(model, data) {
             attributes[key + '_id'] = value.id;
         }
         else if (value === null) {
-            if (_.includes(model.load, key)) {
+            if (_.includes(model.loadEager, key)) {
                 attributes = _.omit(attributes, key);
                 attributes[key + '_id'] = null;
             }

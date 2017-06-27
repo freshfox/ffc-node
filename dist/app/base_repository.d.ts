@@ -4,16 +4,13 @@ import { EventEmitter } from "events";
 import * as BPromise from "bluebird";
 import { Pagination } from "./pagination";
 import { Sorting } from "./sorting";
+import { BaseModel } from './base_model';
 /**
  * A base repository to access the database of a given model
  * @param model The bookshelf model
  * @constructor
  */
-export interface IModelBase {
-    tableName: string;
-    load: string[];
-}
-export declare class BaseRepository<T extends IModelBase> extends EventEmitter {
+export declare class BaseRepository<T extends BaseModel> extends EventEmitter {
     private model;
     static Bookshelf: any;
     private tableName;
@@ -75,7 +72,7 @@ export declare class BaseRepository<T extends IModelBase> extends EventEmitter {
      * @returns {Object}
      */
     createQuery(attributes?: Object, order?: Sorting, pagination?: Pagination): any;
-    associate<U extends IModelBase>(withRepo: BaseRepository<U>, accountId: any, baseModelId: any, withModelId: any, resolveData: any): BPromise<any>;
-    dissociate<U extends IModelBase>(withRepo: BaseRepository<U>, accountId: any, baseModelId: any, withModelId: any): BPromise<any>;
+    associate<U extends BaseModel>(withRepo: BaseRepository<U>, accountId: any, baseModelId: any, withModelId: any, resolveData: any): BPromise<any>;
+    dissociate<U extends BaseModel>(withRepo: BaseRepository<U>, accountId: any, baseModelId: any, withModelId: any): BPromise<any>;
     listBetween(accountId: any, from: any, to: any, order?: Sorting, pagination?: Pagination, column?: string): any;
 }
