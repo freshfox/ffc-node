@@ -46,23 +46,58 @@ export class TestCase {
 	}
 
 	static post(path, data, opts?: RequestOptions) {
-		return this.request().post(path).send(data);
+		let options = this.opts(opts);
+		let req = this.request().post(path).send(data);
+		if (options.headers) {
+			Object.keys(options.headers).forEach((key) => {
+				req.set(key, options.headers[key]);
+			});
+		}
+		return req;
 	}
 
 	static patch(path, data, opts?: RequestOptions) {
-		return this.request().patch(path).send(data);
+		let options = this.opts(opts);
+		let req = this.request().patch(path).send(data);
+		if (options.headers) {
+			Object.keys(options.headers).forEach((key) => {
+				req.set(key, options.headers[key]);
+			});
+		}
+		return req;
 	}
 
 	static put(path, data, opts?: RequestOptions) {
-		return this.request().put(path).send(data);
+		let options = this.opts(opts);
+		let req = this.request().put(path).send(data);
+		if (options.headers) {
+			Object.keys(options.headers).forEach((key) => {
+				req.set(key, options.headers[key]);
+			});
+		}
+		return req;
 	}
 
 	static destroy(path, opts?: RequestOptions) {
-		return this.request().delete(path);
+		let options = this.opts(opts);
+		let req = this.request().delete(path);
+		if (options.headers) {
+			Object.keys(options.headers).forEach((key) => {
+				req.set(key, options.headers[key]);
+			});
+		}
+		return req;
 	}
 
 	static file(path, file, fieldName = 'file', opts?: RequestOptions) {
-		return this.request().post(path).attach(fieldName, file).send();
+		let options = this.opts(opts);
+		let req = this.request().post(path).attach(fieldName, file).send();
+		if (options.headers) {
+			Object.keys(options.headers).forEach((key) => {
+				req.set(key, options.headers[key]);
+			});
+		}
+		return req;
 	}
 
 	private static opts(opts: RequestOptions): RequestOptions {

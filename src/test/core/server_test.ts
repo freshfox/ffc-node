@@ -1,6 +1,5 @@
 import * as should from 'should';
 import * as express from 'express';
-import {Router} from '../../app/router';
 import {Server} from '../../app/server';
 import {TestCase} from '../../app/test_case';
 
