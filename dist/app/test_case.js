@@ -22,35 +22,33 @@ class TestCase {
     static request() {
         return request(this.server.app);
     }
-    static get(path) {
-        return this.request().get(path);
+    static get(path, opts) {
+        let options = this.opts(opts);
+        let req = this.request().get(path);
+        if (options.headers) {
+            Object.keys(options.headers).forEach((key) => {
+                req.set(key, options.headers[key]);
+            });
+        }
+        return req;
     }
-    static post(path, data) {
+    static post(path, data, opts) {
         return this.request().post(path).send(data);
     }
-    static patch(path, data) {
+    static patch(path, data, opts) {
         return this.request().patch(path).send(data);
     }
-    static put(path, data) {
+    static put(path, data, opts) {
         return this.request().put(path).send(data);
     }
-    static destroy(path) {
+    static destroy(path, opts) {
         return this.request().delete(path);
     }
-    static file(path, file, fieldName = 'file') {
+    static file(path, file, fieldName = 'file', opts) {
         return this.request().post(path).attach(fieldName, file).send();
     }
-    static _send(req) {
-        return new Promise(function (resolve, reject) {
-            req.end(function (err, res) {
-                if (err) {
-                    reject(err);
-                }
-                else {
-                    resolve(res);
-                }
-            });
-        });
+    static opts(opts) {
+        return Object.assign({}, this.defaultOptions, opts);
     }
     static startServer() {
         return this.createDatabase()
@@ -80,9 +78,6 @@ class TestCase {
             .then(function () {
             return knex.seed.run();
         });
-    }
-    static send(req, auth) {
-        return this._send(req);
     }
     static shouldNotHappen(msg = 'Should not happen') {
         return (err) => {

@@ -23,7 +23,6 @@
   "license": "UNLICENSED",
   "homepage": "https://bitbucket.org/freshfox/ffc-node#readme",
   "dependencies": {
-    "@types/should": "^8.3.0",
     "bluebird": "^3.5.0",
     "bookshelf": "^0.10.3",
     "bookshelf-cascade-delete": "^2.0.1",
@@ -35,18 +34,20 @@
     "mysql": "^2.13.0",
     "node-env-file": "^0.1.8",
     "reflect-metadata": "^0.1.10",
-    "supertest": "^3.0.0",
-    "ts-node": "^3.1.0"
+    "supertest": "^3.0.0"
   },
   "devDependencies": {
     "@types/bookshelf": "^0.9.3",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.3",
+    "@types/should": "^8.3.0",
+    "express": "^4.15.3",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-tsb": "^2.0.3",
     "mocha": "^3.4.2",
     "should": "^11.2.1",
+    "ts-node": "^3.1.0",
     "typescript": "^2.3.4"
   }
 }

@@ -2,10 +2,17 @@ import * as request from "supertest";
 import * as _ from "lodash";
 import {Server} from './server';
 
+export interface RequestOptions {
+
+	headers?: Object
+
+}
+
 export class TestCase {
 
 	public static Config: any;
 	public static server: Server;
+	public static defaultOptions: RequestOptions;
 
 	static init(context, useServer, useDatabase) {
 		if (useServer) {
@@ -27,41 +34,39 @@ export class TestCase {
 		return request(this.server.app);
 	}
 
-	static get(path) {
-		return this.request().get(path);
+	static get(path, opts?: RequestOptions) {
+		let options = this.opts(opts);
+		let req = this.request().get(path);
+		if (options.headers) {
+			Object.keys(options.headers).forEach((key) => {
+				req.set(key, options.headers[key]);
+			});
+		}
+		return req;
 	}
 
-	static post(path, data) {
+	static post(path, data, opts?: RequestOptions) {
 		return this.request().post(path).send(data);
 	}
 
-	static patch(path, data) {
+	static patch(path, data, opts?: RequestOptions) {
 		return this.request().patch(path).send(data);
 	}
 
-	static put(path, data) {
+	static put(path, data, opts?: RequestOptions) {
 		return this.request().put(path).send(data);
 	}
 
-	static destroy(path) {
+	static destroy(path, opts?: RequestOptions) {
 		return this.request().delete(path);
 	}
 
-	static file(path, file, fieldName = 'file') {
+	static file(path, file, fieldName = 'file', opts?: RequestOptions) {
 		return this.request().post(path).attach(fieldName, file).send();
 	}
 
-	static _send(req) {
-		return new Promise(function (resolve, reject) {
-
-			req.end(function (err, res) {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(res);
-				}
-			})
-		});
+	private static opts(opts: RequestOptions): RequestOptions {
+		return Object.assign({}, this.defaultOptions, opts)
 	}
 
 	protected static startServer() {
@@ -94,10 +99,6 @@ export class TestCase {
 			.then(function () {
 				return knex.seed.run();
 			});
-	}
-
-	static send(req, auth) {
-		return this._send(req);
 	}
 
 	static shouldNotHappen(msg = 'Should not happen') {
