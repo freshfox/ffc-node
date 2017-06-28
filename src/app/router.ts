@@ -138,15 +138,15 @@ const createHandler = (router: Router, route: Route, controllers) => {
 	let callback = getBoundControllerFunction(route.callback, controllers);
 
 	return (req, res, next) => {
-		new BPromise((resolve, reject) => {
 
-			try {
-				let result = callback(req, res, next);
-				resolve(result);
-			} catch (err) {
-				reject(err);
-			}
-		})
+		return BPromise.resolve(null)
+			.then(() => {
+				try {
+					return callback(req, res, next);
+				} catch (err) {
+					return Promise.reject(err);
+				}
+			})
 			.catch(WebError, (err) => {
 				res.status(err.code).render('error', {data: err});
 			})
