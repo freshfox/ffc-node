@@ -13,6 +13,9 @@ describe('Server', function () {
             this.app.get('/', (req, res) => {
                 res.send('works');
             });
+            this.app.post('/', (req, res) => {
+                res.send('post works');
+            });
         }
     }
     test_case_1.TestCase.server = new TestServer();
@@ -38,6 +41,13 @@ describe('Server', function () {
             .then((res) => {
             should(res.request.header.Authorization).eql('Bearer custom');
             should(res.text).eql('works');
+        });
+    });
+    it('should send a simple post request without options', () => {
+        test_case_1.TestCase.defaultOptions = null;
+        return test_case_1.TestCase.post('/', {})
+            .then((res) => {
+            should(res.text).eql('post works');
         });
     });
 });
