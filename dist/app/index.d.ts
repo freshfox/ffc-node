@@ -5,7 +5,7 @@ export declare class FFCore {
     static configure(config: FFCoreConfig): void;
 }
 export interface FFCoreConfig {
-    database: any;
+    database?: any;
 }
 export { BaseRepository } from './base_repository';
 export { TestCase } from './test_case';

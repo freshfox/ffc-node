@@ -7,13 +7,15 @@ const test_case_1 = require("./test_case");
 const base_repository_1 = require("./base_repository");
 class FFCore {
     static configure(config) {
-        let knex = require('knex')(config.database);
-        let cascadeDelete = require('bookshelf-cascade-delete');
-        let bookshelf = require('bookshelf')(knex);
-        bookshelf.plugin(cascadeDelete);
+        if (config.database) {
+            let knex = require('knex')(config.database);
+            let cascadeDelete = require('bookshelf-cascade-delete');
+            let bookshelf = require('bookshelf')(knex);
+            bookshelf.plugin(cascadeDelete);
+            this.Bookshelf = FFCore.Config.Bookshelf = base_repository_1.BaseRepository.Bookshelf = bookshelf;
+            this.BaseModel = require('./base_model').BaseModel;
+        }
         this.Config = test_case_1.TestCase.Config = config;
-        this.Bookshelf = FFCore.Config.Bookshelf = base_repository_1.BaseRepository.Bookshelf = bookshelf;
-        this.BaseModel = require('./base_model').BaseModel;
     }
 }
 exports.FFCore = FFCore;

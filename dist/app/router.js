@@ -104,13 +104,13 @@ exports.Router = Router;
 const createHandler = (router, route, controllers) => {
     let callback = getBoundControllerFunction(route.callback, controllers);
     return (req, res, next) => {
-        new BPromise((resolve, reject) => {
+        return BPromise.resolve(null)
+            .then(() => {
             try {
-                let result = callback(req, res, next);
-                resolve(result);
+                return callback(req, res, next);
             }
             catch (err) {
-                reject(err);
+                return Promise.reject(err);
             }
         })
             .catch(error_1.WebError, (err) => {
