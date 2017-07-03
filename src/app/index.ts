@@ -8,21 +8,23 @@ export class FFCore {
 	public static BaseModel;
 
 	static configure(config: FFCoreConfig) {
-		let knex = require('knex')(config.database);
-		let cascadeDelete = require('bookshelf-cascade-delete');
-		let bookshelf = require('bookshelf')(knex);
+		if (config.database) {
+			let knex = require('knex')(config.database);
+			let cascadeDelete = require('bookshelf-cascade-delete');
+			let bookshelf = require('bookshelf')(knex);
 
-		bookshelf.plugin(cascadeDelete);
+			bookshelf.plugin(cascadeDelete);
+			this.Bookshelf = FFCore.Config.Bookshelf = BaseRepository.Bookshelf = bookshelf;
+			this.BaseModel = require('./base_model').BaseModel;
+		}
 
 		this.Config = TestCase.Config = config;
-		this.Bookshelf = FFCore.Config.Bookshelf = BaseRepository.Bookshelf = bookshelf;
-		this.BaseModel = require('./base_model').BaseModel;
 	}
 }
 
 export interface FFCoreConfig {
 
-	database: any
+	database?: any
 
 }
 

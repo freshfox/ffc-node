@@ -112,6 +112,9 @@ export class TestCase {
 	}
 
 	protected static createDatabase() {
+		if (!this.Config || !this.Config.database) {
+			return;
+		}
 		let config = this.Config.database;
 		let name = config.connection.database;
 
