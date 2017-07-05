@@ -1,4 +1,4 @@
-import {BaseRepository} from '../../app/base_repository';
+import {BaseRepository} from '../../app/storage/base_repository';
 import {TestCase} from '../../app/test_case';
 import * as should from 'should';
 import {BaseModel} from '../../app/base_model';

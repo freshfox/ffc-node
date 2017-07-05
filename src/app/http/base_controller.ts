@@ -1,8 +1,9 @@
-
+import {injectable} from 'inversify';
 import {EventEmitter} from "events";
 import {Sorting} from "./sorting";
 import {Pagination} from "./pagination";
 
+@injectable()
 export class BaseController extends EventEmitter {
 
 	private defaultSortDirection: string = 'desc';

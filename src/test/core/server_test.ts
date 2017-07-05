@@ -1,6 +1,6 @@
 import * as should from 'should';
 import * as express from 'express';
-import {Server} from '../../app/server';
+import {Server} from '../../app/http/server';
 import {TestCase} from '../../app/test_case';
 
 describe('Server', function() {

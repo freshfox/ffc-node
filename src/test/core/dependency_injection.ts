@@ -1,6 +1,6 @@
 import {EventEmitter} from 'events';
 import {Container, decorate, injectable} from 'inversify';
-import {BaseRepository} from '../../app/base_repository';
+import {BaseRepository} from '../../app/storage/base_repository';
 import {FFCore} from '../../app/index';
 import * as should from 'should';
 

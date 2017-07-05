@@ -1,6 +1,6 @@
 import * as request from "supertest";
 import * as _ from "lodash";
-import {Server} from './server';
+import {Server} from './http/server';
 
 export interface RequestOptions {
 
