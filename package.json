@@ -14,7 +14,8 @@
   "scripts": {
     "test": "NODE_ENV=test mocha dist/test",
     "build": "gulp",
-    "preversion": "gulp && npm test"
+    "preversion": "gulp && npm test",
+    "postversion": "git checkout master && git pull && git merge develop"
   },
   "repository": {
     "type": "git",
