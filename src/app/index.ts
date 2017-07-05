@@ -1,3 +1,5 @@
+import "reflect-metadata";
+
 export { BaseRepository } from './storage/base_repository';
 export { TestCase } from './test_case';
 export { BaseController } from './http/base_controller';

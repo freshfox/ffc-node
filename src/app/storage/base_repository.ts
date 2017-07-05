@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import {inject, injectable} from 'inversify';
 import {StorageDriver} from './storage_driver';
 import {TYPES} from '../types';

@@ -1,7 +1,7 @@
-import {Router} from '../../app/http/router';
+import {Router} from '../../../app/http/router';
 import * as should from 'should';
-import {WebError} from '../../app/http/error';
-import {TestCase} from '../../app/test_case';
+import {WebError} from '../../../app/http/error';
+import {TestCase} from '../../../app/test_case';
 
 class FakeResponse {
 
