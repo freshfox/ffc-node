@@ -1,7 +1,7 @@
 {
   "name": "ffc-node",
   "version": "4.0.9",
-  "description": "The Freshfox Core Node package",
+  "description": "A TypeScript based NodeJS framework for testable and growing REST APIs",
   "main": "dist/app/index.js",
   "types": "dist/app/index.d.ts",
   "directories": {
@@ -17,11 +17,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/freshfox/ffc-node.git"
+    "url": "git+ssh://git@github.com/freshfox/ffc-node.git"
   },
   "author": "Dominic Bartl",
   "license": "UNLICENSED",
-  "homepage": "https://bitbucket.org/freshfox/ffc-node#readme",
+  "homepage": "https://github.com/freshfox/ffc-node#readme",
   "dependencies": {
     "bluebird": "^3.5.0",
     "bookshelf": "^0.10.3",
