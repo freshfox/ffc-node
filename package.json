@@ -13,7 +13,8 @@
   },
   "scripts": {
     "test": "NODE_ENV=test mocha dist/test",
-    "build": "gulp"
+    "build": "gulp",
+    "preversion": "gulp && npm test"
   },
   "repository": {
     "type": "git",
