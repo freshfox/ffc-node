@@ -11,6 +11,9 @@
   "engines": {
     "node": "8.1.2"
   },
+  "files": [
+    "dist/", "src/", "test/", ".editorconfig", "gulpfile.js", "tsconfig.json"
+  ],
   "scripts": {
     "test": "NODE_ENV=test mocha dist/test",
     "build": "gulp",
