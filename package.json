@@ -1,6 +1,6 @@
 {
   "name": "ffc-node",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "A TypeScript based NodeJS framework for testable and growing REST APIs",
   "main": "dist/app/index.js",
   "types": "dist/app/index.d.ts",
@@ -12,7 +12,12 @@
     "node": "8.1.2"
   },
   "files": [
-    "dist/", "src/", "test/", ".editorconfig", "gulpfile.js", "tsconfig.json"
+    "dist/",
+    "src/",
+    "test/",
+    ".editorconfig",
+    "gulpfile.js",
+    "tsconfig.json"
   ],
   "scripts": {
     "test": "NODE_ENV=test mocha dist/test",
