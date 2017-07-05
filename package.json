@@ -1,6 +1,6 @@
 {
   "name": "ffc-node",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "A TypeScript based NodeJS framework for testable and growing REST APIs",
   "main": "dist/app/index.js",
   "types": "dist/app/index.d.ts",
