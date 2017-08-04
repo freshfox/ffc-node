@@ -1,5 +1,5 @@
-import {Express, Request, Response} from 'express';
 
+import {Express, Request, Response} from 'express';
 export interface Authenticator {
 
 	setup(app: Express);

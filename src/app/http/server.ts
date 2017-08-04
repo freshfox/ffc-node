@@ -1,11 +1,10 @@
-import * as http from 'http';
-import {Express} from 'express';
+import * as http from "http";
 
 export abstract class Server {
 
 	protected server: any;
 
-	constructor(public app: Express, protected port: number) {
+	constructor(public app: any, protected port: number) {
 	}
 
 	abstract configure();
@@ -15,7 +14,7 @@ export abstract class Server {
 		return new Promise((resolve) => {
 			let self = this;
 			let server = http.createServer(this.app);
-			server.listen(this.port, function () {
+			server.listen(this.port, function() {
 				self.server = this;
 				resolve(this);
 			});

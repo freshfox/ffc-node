@@ -1,7 +1,7 @@
 {
   "name": "ffc-node",
-  "version": "5.0.4",
-  "description": "A TypeScript based NodeJS framework for testable and growing REST APIs",
+  "version": "4.0.10",
+  "description": "The Freshfox Core Node package",
   "main": "dist/app/index.js",
   "types": "dist/app/index.d.ts",
   "directories": {
@@ -11,36 +11,34 @@
   "engines": {
     "node": "8.1.2"
   },
-  "files": [
-    "dist/",
-    "src/",
-    "test/",
-    ".editorconfig",
-    "gulpfile.js",
-    "tsconfig.json"
-  ],
   "scripts": {
     "test": "NODE_ENV=test mocha dist/test",
-    "build": "gulp",
-    "preversion": "gulp && npm test",
-    "postversion": "git checkout master && git pull && git merge develop"
+    "build": "gulp"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/freshfox/ffc-node.git"
+    "url": "git+ssh://git@bitbucket.org/freshfox/ffc-node.git"
   },
   "author": "Dominic Bartl",
   "license": "UNLICENSED",
-  "homepage": "https://github.com/freshfox/ffc-node#readme",
+  "homepage": "https://bitbucket.org/freshfox/ffc-node#readme",
   "dependencies": {
     "bluebird": "^3.5.0",
+    "bookshelf": "^0.10.3",
+    "bookshelf-cascade-delete": "^2.0.1",
     "checkit": "^0.7.0",
+    "cnfg": "^1.2.0",
     "inversify": "^4.1.1",
+    "jsonwebtoken": "^7.4.2",
+    "knex": "^0.13.0",
     "lodash": "^4.17.4",
+    "mysql": "^2.13.0",
+    "node-env-file": "^0.1.8",
     "reflect-metadata": "^0.1.10",
     "supertest": "^3.0.0"
   },
   "devDependencies": {
+    "@types/bookshelf": "^0.9.3",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.3",
     "@types/should": "^8.3.0",
@@ -51,6 +49,6 @@
     "mocha": "^3.4.2",
     "should": "^11.2.1",
     "ts-node": "^3.1.0",
-    "typescript": "2.3.4"
+    "typescript": "^2.3.4"
   }
 }

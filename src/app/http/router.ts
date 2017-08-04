@@ -1,7 +1,7 @@
 import {EventEmitter} from "events";
 import * as path from "path";
 import * as BPromise from "bluebird";
-import {WebError} from "./error";
+import {WebError} from '../error';
 
 export interface Route {
 

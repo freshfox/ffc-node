@@ -1,7 +1,7 @@
 import * as Checkit from 'checkit';
 import * as BPromise from 'bluebird';
 import * as _ from 'lodash';
-import {WebError} from "./error";
+import {WebError} from "../error";
 
 export class Validator {
 

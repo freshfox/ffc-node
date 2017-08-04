@@ -1,3 +1,3 @@
 # Freshfox Core Node
 
-TODO
+This is going to be freaking awesome
