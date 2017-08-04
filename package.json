@@ -8,12 +8,21 @@
     "test": "test",
     "lib": "src"
   },
+  "files": [
+    "dist/",
+    "src/",
+    "test/",
+    ".editorconfig",
+    "gulpfile.js",
+    "tsconfig.json"
+  ],
   "engines": {
     "node": "8.1.2"
   },
   "scripts": {
     "test": "NODE_ENV=test mocha dist/test",
-    "build": "gulp"
+    "build": "gulp",
+    "preversion": "gulp && npm test"
   },
   "repository": {
     "type": "git",
