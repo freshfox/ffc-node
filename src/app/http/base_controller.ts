@@ -1,4 +1,4 @@
-
+import "reflect-metadata";
 import {EventEmitter} from "events";
 import {Order, OrderDirection} from './order';
 import {Pagination} from "./pagination";

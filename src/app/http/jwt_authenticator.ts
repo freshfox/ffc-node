@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import {Authenticator} from '../core/authenticator';
 import {Express, Request} from 'express';
 import * as jwt from 'jsonwebtoken';

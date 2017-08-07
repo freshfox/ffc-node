@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import {injectable} from 'inversify';
 import {ModelDesc, RelationType, StorageDriver} from '../core/storage_driver';
 import * as knex from 'knex';

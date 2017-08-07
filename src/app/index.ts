@@ -1,3 +1,4 @@
+import "reflect-metadata";
 export * from './core/authenticator'
 export * from './core/storage_driver'
 export * from './core/types'
