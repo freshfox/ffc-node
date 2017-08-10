@@ -3,10 +3,9 @@ import * as express from 'express';
 import {TestCase} from '../../app/test_case';
 import {Server} from '../../app/http/server';
 import {Container} from 'inversify';
-import {KnexConfig} from '../../../dist/app/storage/mysql_driver';
 import {StorageDriver} from '../../app/core/storage_driver';
 import {TYPES} from '../../app/index';
-import {MySQLDriver} from '../../app/storage/mysql_driver';
+import {KnexConfig, MySQLDriver} from '../../app/storage/mysql_driver';
 
 describe('Server', function() {
 
