@@ -50,14 +50,14 @@ export abstract class JWTAuthenticator implements Authenticator {
 
 	protected abstract getSecret();
 
-	protected abstract getValidityLength();
+	protected abstract getJWTOptions(): JWTOptions;
 
 	authenticate(req, res, next: Function) {
 		return this.findUser(req)
 			.then((user) => {
 				jwt.sign({
 					data: user,
-				} as object, this.getSecret(), { expiresIn: this.getValidityLength() }, (err, token) => {
+				} as object, this.getSecret(), this.getJWTOptions(), (err, token) => {
 
 					if (err) {
 						console.error(err);
@@ -72,4 +72,27 @@ export abstract class JWTAuthenticator implements Authenticator {
 	}
 
 	abstract findUser(req: Request): Promise<any>;
+}
+
+export interface JWTOptions {
+
+	/**
+	 * default: HS256
+	 */
+	algorithm?: string;
+	/**
+	 * Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"
+	 */
+	expiresIn?: number|string;
+	/**
+	 * Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"
+	 */
+	notBefore?: number|string;
+	audience?: string;
+	issuer?: string;
+	jwtid?: string;
+	subject?: string;
+	noTimestamp?: string;
+	header?: string;
+	keyid?: string;
 }
