@@ -1,8 +1,7 @@
 import "reflect-metadata";
 import {EventEmitter} from "events";
-import {Order, OrderDirection} from './order';
-import {Pagination} from "./pagination";
 import {injectable} from 'inversify';
+import {Order, OrderDirection, Pagination} from '../core/storage_driver';
 
 @injectable()
 export class BaseController extends EventEmitter {

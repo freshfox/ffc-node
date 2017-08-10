@@ -1,24 +1,22 @@
 import {injectable} from 'inversify';
-import {ModelDesc, RelationType, StorageDriver} from '../core/storage_driver';
+import {Order, Pagination, StorageDriver} from '../core/storage_driver';
 import * as knex from 'knex';
 import * as bookshelf from 'bookshelf';
 import * as _ from 'lodash';
-import {Order} from '../http/order';
-import {Pagination} from '../http/pagination';
+import {WebError} from '../error';
+import {ModelDesc, RelationDesc, RelationType} from './decorators';
 
 @injectable()
-export abstract class MySQLDriver implements StorageDriver {
+export class MySQLDriver implements StorageDriver {
 
 	private knex;
 	private bookshelf;
 	private models = {};
 
-	constructor() {
-		this.knex = knex(this.getKnexConfig());
+	constructor(private config: KnexConfig) {
+		this.knex = knex(config);
 		this.bookshelf = bookshelf(this.knex);
 	}
-
-	protected abstract getKnexConfig();
 
 	findById(entity, id, options?) {
 		return this.find(entity, { id: id }, options);
@@ -49,20 +47,19 @@ export abstract class MySQLDriver implements StorageDriver {
 	}
 
 	async createTables(): Promise<any> {
-		const dbConfig = this.getKnexConfig();
 
-		let instance = this.bootStrapConfig(dbConfig);
-		const name = dbConfig.connection.database;
+		let instance = this.bootStrapConfig(this.config);
+		const name = this.config.connection.database;
 		await instance.raw(`CREATE DATABASE IF NOT EXISTS ${name}`);
 
-		instance = knex(dbConfig);
+		instance = knex(this.config);
 		await instance.migrate.latest();
 		await instance.destroy();
 	}
 
 	async clear() {
-		let name = this.getKnexConfig().connection.database;
-		let instance = this.bootStrapConfig(this.getKnexConfig());
+		let name = this.config.connection.database;
+		let instance = this.bootStrapConfig(this.config);
 		await instance.raw('DROP DATABASE IF EXISTS ' + name);
 		await instance.raw('CREATE DATABASE ' + name);
 		await instance.destroy();
@@ -119,6 +116,36 @@ export abstract class MySQLDriver implements StorageDriver {
 		return filter;
 	}
 
+	async associate(entity: string, withEntity: string, entityId, withEntityId, resolveData?) {
+		const model = await this.findById(entity, entityId);
+		const withModel = await this.findById(withEntity, withEntityId);
+		if (!model || !withModel) {
+			throw WebError.notFound('Unable to find model')
+		}
+
+		const instance = this.models[entity].forge({id: entityId});
+		const withInstance = this.models[withEntity].forge({id: withEntityId});
+
+		const relation = instance.related(withInstance.tableName);
+		if (!relation) {
+			throw WebError.badRequest('Can not associate unrelated models');
+		}
+		const key = relation.relatedData.key('otherKey');
+		const existingAssociation = await relation
+			.query((qb) => {
+				qb.where(key, withInstance.id);
+			}).fetch();
+		if (!existingAssociation.length) {
+			await relation.attach(withInstance)
+		}
+		if (resolveData) {
+			const pivotData = await resolveData(model, withModel);
+			const where = {};
+			where[key] = withInstance.id;
+			return relation.updatePivot(pivotData, {query: {where: where}});
+		}
+	}
+
 	registerEntity(desc: ModelDesc) {
 		let schema = {
 			tableName: desc.tableName,
@@ -137,6 +164,10 @@ export abstract class MySQLDriver implements StorageDriver {
 
 					case RelationType.HAS_MANY:
 						schema[key] = this.createHasMany(key, value.clazz);
+						break;
+
+					case RelationType.BELONGS_TO_MANY:
+						schema[key] = this.createBelongsToMany(key, value.clazz, value);
 						break;
 				}
 			})
@@ -166,7 +197,18 @@ export abstract class MySQLDriver implements StorageDriver {
 	private createHasMany(property: string, clazz: ModelDesc) {
 		let self = this;
 		return function () {
-			return this.hasMany(self.models[clazz.tableName])
+			return this.hasMany(self.models[clazz.tableName]);
+		}
+	}
+
+	private createBelongsToMany(property: string, clazz: ModelDesc, relation: RelationDesc) {
+		let self = this;
+		return function () {
+			let rel = this.belongsToMany(self.models[clazz.tableName]);
+			if (relation.pivotAttributes) {
+				rel.withPivot(relation.pivotAttributes);
+			}
+			return rel;
 		}
 	}
 
@@ -241,6 +283,24 @@ export abstract class MySQLDriver implements StorageDriver {
 			relations: relations,
 			attributes: attributes
 		};
+	}
+}
+
+export interface KnexConfig  {
+	client: string,
+	debug: boolean,
+	connection: {
+		host: string,
+		user: string,
+		password: string,
+		database: string,
+		charset: string,
+	},
+	migrations: {
+		directory: string
+	},
+	seeds: {
+		directory: string
 	}
 }
 

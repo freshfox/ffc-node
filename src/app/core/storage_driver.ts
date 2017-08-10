@@ -1,5 +1,4 @@
-import {Pagination} from '../http/pagination';
-import {Order} from '../http/order';
+import {ModelDesc} from '../storage/decorators';
 
 export interface StorageDriver {
 
@@ -23,32 +22,37 @@ export interface StorageDriver {
 
 	createTables(): Promise<any>;
 
+	associate(entity: string, withEntity: string, entityId, withEntityId, resolveData?): Promise<any>
+
 	clear();
 
 }
 
-export enum RelationType {
+export interface Query {
 
-	BELONGS_TO = 'belongs_to' as any,
-	HAS_ONE = 'has_one' as any,
-	HAS_MANY = 'has_many' as any,
+	order?: Order;
+	pagination?: Pagination;
 
-}
-
-export interface ModelDesc {
-
-	tableName?: string;
-	timestamps?: boolean;
-	__schema?: object;
-	__relations?: Map<string, RelationDesc>
-	__keys?: object;
-	__eager?: string[]
 
 }
 
-export interface RelationDesc {
+export interface Order {
 
-	type: RelationType,
-	clazz: ModelDesc
+	column: string;
+	direction: OrderDirection;
+
+}
+
+export enum OrderDirection {
+
+	ASC = 'asc' as any,
+	DESC = 'desc' as any
+
+}
+
+export interface Pagination {
+
+	limit: number;
+	offset: number;
 
 }

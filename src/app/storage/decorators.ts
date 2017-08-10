@@ -1,6 +1,3 @@
-
-import {ModelDesc, RelationDesc, RelationType} from '../core/storage_driver';
-
 export function entity(tableName?: string) {
 	return (constructor: Function) => {
 		Object.assign(constructor, {
@@ -54,6 +51,17 @@ export function hasMany(clazz: ModelDesc, loadEager?: boolean) {
 	};
 }
 
+export function belongsToMany(clazz: ModelDesc, loadEager?: boolean, pivotAttributes?: string[]) {
+	return (target: any, propertyKey: string) => {
+		let desc = target.constructor as ModelDesc;
+		addRelationProperty(desc, propertyKey, RelationType.BELONGS_TO_MANY, clazz, pivotAttributes);
+		if (loadEager) {
+			desc.__eager = desc.__eager || [];
+			desc.__eager.push(propertyKey);
+		}
+	};
+}
+
 export function primary() {
 	return (target: any, propertyKey: string) => {
 		addSchemaProperty(target.constructor, propertyKey, 'uuid');
@@ -78,11 +86,12 @@ function addSchemaProperty(proto, propertyKey: string, type: string, clazz?:  ne
 	});
 }
 
-function addRelationProperty(proto: ModelDesc, propertyKey: string, type: RelationType, clazz?:  ModelDesc) {
+function addRelationProperty(proto: ModelDesc, propertyKey: string, type: RelationType, clazz?:  ModelDesc, pivotAttributes?: string[]) {
 	proto.__relations = proto.__relations  || new Map<string, RelationDesc>();
 	proto.__relations.set(propertyKey, {
 		type: type,
-		clazz: clazz
+		clazz: clazz,
+		pivotAttributes: pivotAttributes
 	});
 }
 
@@ -92,4 +101,32 @@ function addKeyProperty(proto, propertyKey: string, type: string) {
 	Object.assign(proto, {
 		__keys: keys
 	});
+}
+
+export enum RelationType {
+
+	BELONGS_TO = 'belongs_to' as any,
+	HAS_ONE = 'has_one' as any,
+	HAS_MANY = 'has_many' as any,
+	BELONGS_TO_MANY = 'belongs_to_many' as any,
+
+}
+
+export interface ModelDesc {
+
+	tableName?: string;
+	timestamps?: boolean;
+	__schema?: object;
+	__relations?: Map<string, RelationDesc>
+	__keys?: object;
+	__eager?: string[]
+
+}
+
+export interface RelationDesc {
+
+	type: RelationType,
+	clazz: ModelDesc,
+	pivotAttributes: string[]
+
 }
