@@ -123,6 +123,10 @@ export interface ModelDesc {
 
 }
 
+export interface OnSave {
+	onSave?(attributes, options);
+}
+
 export interface RelationDesc {
 
 	type: RelationType,

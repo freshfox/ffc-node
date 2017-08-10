@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
 import {Order, Pagination, StorageDriver} from '../core/storage_driver';
 import * as knex from 'knex';
@@ -20,7 +21,7 @@ export class MySQLDriver implements StorageDriver {
 	}
 
 	findById(entity, id, options?) {
-		return this.find(entity, { id: id }, options);
+		return this.find(entity, {id: id}, options);
 	}
 
 	find(entity: string, data: any, options?): Promise<any> {
@@ -173,6 +174,17 @@ export class MySQLDriver implements StorageDriver {
 				}
 			})
 		}
+
+		let saveEventCallback = desc['onSave'];
+		if (saveEventCallback && typeof saveEventCallback === 'function') {
+			schema['initialize'] = function () {
+				this.on('saving', async (model, attributes, options) => {
+					await saveEventCallback(attributes, options);
+					model.set(attributes);
+				});
+			}
+		}
+
 		if (desc.timestamps) {
 			schema['hasTimestamps'] = true;
 		}
@@ -226,7 +238,7 @@ export class MySQLDriver implements StorageDriver {
 			})
 			.then((savedModel) => {
 				let relationPromises = [];
-				_.forOwn(relations, (value, key) =>{
+				_.forOwn(relations, (value, key) => {
 					let relation = savedModel.related(key);
 					let relationIds = [];
 					if (relation instanceof this.bookshelf.Collection) {
@@ -287,7 +299,7 @@ export class MySQLDriver implements StorageDriver {
 	}
 }
 
-export interface KnexConfig  {
+export interface KnexConfig {
 	client: string,
 	debug: boolean,
 	connection: {
