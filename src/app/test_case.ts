@@ -1,6 +1,8 @@
 import * as request from "supertest";
-import * as _ from "lodash";
+import {Container} from 'inversify';
 import {Server} from './http/server';
+import {StorageDriver} from './core/storage_driver';
+import {TYPES} from './core/types';
 
 export interface RequestOptions {
 
@@ -10,31 +12,53 @@ export interface RequestOptions {
 
 export class TestCase {
 
-	public static Config: any;
-	public static server: Server;
-	public static defaultOptions: RequestOptions;
+	private server: Server;
+	private container: Container;
+	public defaultOptions: RequestOptions;
 
-	static init(context, useServer, useDatabase) {
-		if (useServer) {
-			context.beforeEach(() => {
-				return this.startServer();
-			});
-			context.afterEach(() => {
-				const app = this.server;
-				return app.stop();
-			});
-		} else if (useDatabase) {
-			context.beforeEach(() => {
-				return this.createDatabase();
-			});
-		}
+	static create(context: any, server: Server, defaultOptions?: RequestOptions): TestCase {
+		let testCase = new TestCase();
+		testCase.defaultOptions = defaultOptions;
+		context.beforeEach(async () => {
+			testCase.server = server;
+			const driver = testCase.getContainer().get<StorageDriver>(TYPES.StorageDriver);
+			await driver.clear();
+			await driver.createTables();
+			return server.start();
+		});
+		context.afterEach(() => {
+			return testCase.server.stop();
+		});
+		return testCase;
 	}
 
-	static request() {
+	static createDatabaseOnly(context, container?: Container) {
+		let testCase = new TestCase();
+		testCase.container = new Container();
+		if (container) {
+			container.parent = testCase.container;
+			testCase.container = container;
+		}
+		context.beforeEach(async () => {
+			const driver = testCase.getContainer().get<StorageDriver>(TYPES.StorageDriver);
+			await driver.clear();
+			return driver.createTables();
+		});
+		return testCase;
+	}
+
+	getContainer(): Container {
+		if (this.server) {
+			return this.server.getContainer();
+		}
+		return this.container;
+	}
+
+	private request() {
 		return request(this.server.app);
 	}
 
-	static get(path, opts?: RequestOptions) {
+	public get(path, opts?: RequestOptions) {
 		let options = this.opts(opts);
 		let req = this.request().get(path);
 		if (options.headers) {
@@ -45,7 +69,7 @@ export class TestCase {
 		return req;
 	}
 
-	static post(path, data, opts?: RequestOptions) {
+	public post(path, data?, opts?: RequestOptions) {
 		let options = this.opts(opts);
 		let req = this.request().post(path).send(data);
 		if (options.headers) {
@@ -56,7 +80,7 @@ export class TestCase {
 		return req;
 	}
 
-	static patch(path, data, opts?: RequestOptions) {
+	public patch(path, data, opts?: RequestOptions) {
 		let options = this.opts(opts);
 		let req = this.request().patch(path).send(data);
 		if (options.headers) {
@@ -67,7 +91,7 @@ export class TestCase {
 		return req;
 	}
 
-	static put(path, data, opts?: RequestOptions) {
+	public put(path, data, opts?: RequestOptions) {
 		let options = this.opts(opts);
 		let req = this.request().put(path).send(data);
 		if (options.headers) {
@@ -78,7 +102,7 @@ export class TestCase {
 		return req;
 	}
 
-	static destroy(path, opts?: RequestOptions) {
+	public destroy(path, opts?: RequestOptions) {
 		let options = this.opts(opts);
 		let req = this.request().delete(path);
 		if (options.headers) {
@@ -89,7 +113,7 @@ export class TestCase {
 		return req;
 	}
 
-	static file(path, file, fieldName = 'file', opts?: RequestOptions) {
+	public file(path, file, fieldName = 'file', opts?: RequestOptions) {
 		let options = this.opts(opts);
 		let req = this.request().post(path).attach(fieldName, file).send();
 		if (options.headers) {
@@ -100,43 +124,28 @@ export class TestCase {
 		return req;
 	}
 
-	private static opts(opts: RequestOptions): RequestOptions {
-		return Object.assign({}, this.defaultOptions, opts)
-	}
+	public formData(path, data, file, fileFieldName = 'file', opts?: RequestOptions) {
+		let options = this.opts(opts);
+		let req = this.request().post(path);
 
-	protected static startServer() {
-		return this.createDatabase()
-			.then(() => {
-				return this.server.start();
-			});
-	}
-
-	protected static createDatabase() {
-		if (!this.Config || !this.Config.database) {
-			return Promise.resolve();
-		}
-		let config = this.Config.database;
-		let name = config.connection.database;
-
-		let knex = require('knex')({
-			client: 'mysql',
-			connection: _.pick(config.connection, 'host', 'user', 'password', 'charset')
+		Object.keys(data).forEach((key) => {
+			req.field(key, data[key]);
 		});
-		return knex.raw('DROP DATABASE IF EXISTS ' + name)
-			.then(function () {
-				return knex.raw('CREATE DATABASE ' + name);
-			})
-			.then(function () {
-				return knex.destroy();
-			})
-			.then(function () {
-				config.connection.database = name;
-				knex = require('knex')(config);
-				return knex.migrate.latest()
-			})
-			.then(function () {
-				return knex.seed.run();
+
+		if (file) {
+			req.attach(fileFieldName, file);
+		}
+
+		if (options.headers) {
+			Object.keys(options.headers).forEach((key) => {
+				req.set(key, options.headers[key]);
 			});
+		}
+		return req;
+	}
+
+	private opts(opts: RequestOptions): RequestOptions {
+		return Object.assign({}, this.defaultOptions, opts)
 	}
 
 	static shouldNotHappen(msg = 'Should not happen') {

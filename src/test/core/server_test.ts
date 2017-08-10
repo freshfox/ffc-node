@@ -2,10 +2,22 @@ import * as should from 'should';
 import * as express from 'express';
 import {TestCase} from '../../app/test_case';
 import {Server} from '../../app/http/server';
+import {Container} from 'inversify';
+import {KnexConfig} from '../../../dist/app/storage/mysql_driver';
+import {StorageDriver} from '../../app/core/storage_driver';
+import {TYPES} from '../../app/index';
+import {MySQLDriver} from '../../app/storage/mysql_driver';
 
 describe('Server', function() {
 
 	class TestServer extends Server {
+
+		getContainer(): Container {
+			let container = new Container();
+			container.bind<KnexConfig>(TYPES.KnexConfig).toConstantValue(require('../../../config/database'));
+			container.bind<StorageDriver>(TYPES.StorageDriver).to(MySQLDriver).inSingletonScope();
+			return container;
+		}
 
 		constructor() {
 			super(express(), 3002)
@@ -21,17 +33,15 @@ describe('Server', function() {
 		}
 	}
 
-	TestCase.server = new TestServer();
-	TestCase.defaultOptions = {
+	const testCase = TestCase.create(this, new TestServer(), {
 		headers: {
 			Authorization: 'Bearer tokenasdf'
 		}
-	};
-	TestCase.init(this, true, false);
+	});
 
 	it('should send a simple request with default options', () => {
 
-		return TestCase.get('/')
+		return testCase.get('/')
 			.then((res) => {
 				should(res.request.header.Authorization).eql('Bearer tokenasdf');
 				should(res.text).eql('works');
@@ -41,7 +51,7 @@ describe('Server', function() {
 
 	it('should send a simple request with options', () => {
 
-		return TestCase.get('/', {
+		return testCase.get('/', {
 			headers: {
 				Authorization: 'Bearer custom'
 			}
@@ -54,8 +64,9 @@ describe('Server', function() {
 	});
 
 	it('should send a simple post request without options', () => {
-		TestCase.defaultOptions = null;
-		return TestCase.post('/', {})
+		return testCase.post('/', {}, {
+			headers: {}
+		})
 			.then((res) => {
 				should(res.text).eql('post works');
 			})

@@ -1,4 +1,5 @@
 import * as http from "http";
+import {Container} from 'inversify';
 
 export abstract class Server {
 
@@ -28,5 +29,7 @@ export abstract class Server {
 			return result;
 		}
 	}
+
+	abstract getContainer(): Container;
 
 }

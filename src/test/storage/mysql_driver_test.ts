@@ -1,31 +1,41 @@
+import * as should from 'should';
 import {entity} from '../../app/storage/decorators';
-import {MySQLDriver} from '../../app/storage/mysql_driver';
+import {KnexConfig, MySQLDriver} from '../../app/storage/mysql_driver';
+import {TestCase} from '../../app/test_case';
+import {Container} from 'inversify';
+import {StorageDriver} from '../../app/core/storage_driver';
+import {TYPES} from '../../app/core/types';
 
 @entity('users')
 class UserModel {
 
-	static onSave(attributes, options) {
+	static onSave(attributes) {
 		attributes.firstname += '_saved';
 	}
 
 }
 
-
 describe('MysqlDriver', function () {
 
-	const driver = new MySQLDriver(require('../../../config/database'));
+	let container = new Container();
+	container.bind<KnexConfig>(TYPES.KnexConfig).toConstantValue(require('../../../config/database'));
+	container.bind<StorageDriver>(TYPES.StorageDriver).to(MySQLDriver).inSingletonScope();
+
+	let driver = container.get<StorageDriver>(TYPES.StorageDriver);
 	driver.registerEntity(UserModel);
 
-    it('should save a model and call onSave', async () => {
+	let testCase = TestCase.createDatabaseOnly(this, container);
 
-	    const user = await driver.save('users', {
-		    firstname: 'test',
-		    lastname: 'test',
-		    email: 'test4@test.com',
-		    password: 'password'
-	    });
+	it('should save a model and call onSave', async () => {
 
-	    console.log(user);
-    });
+		const user = await driver.save('users', {
+			firstname: 'test',
+			lastname: 'test',
+			email: 'test@test.com',
+			password: 'password'
+		});
+
+		should(user).property('firstname', 'test_saved');
+	});
 
 });
