@@ -1,10 +1,11 @@
-import {injectable} from 'inversify';
+import {inject, injectable} from 'inversify';
 import {Order, Pagination, StorageDriver} from '../core/storage_driver';
 import * as knex from 'knex';
 import * as bookshelf from 'bookshelf';
 import * as _ from 'lodash';
 import {WebError} from '../error';
 import {ModelDesc, RelationDesc, RelationType} from './decorators';
+import {TYPES} from '../core/types';
 
 @injectable()
 export class MySQLDriver implements StorageDriver {
@@ -13,7 +14,7 @@ export class MySQLDriver implements StorageDriver {
 	private bookshelf;
 	private models = {};
 
-	constructor(private config: KnexConfig) {
+	constructor(@inject(TYPES.KnexConfig) private config: KnexConfig) {
 		this.knex = knex(config);
 		this.bookshelf = bookshelf(this.knex);
 	}
