@@ -20,6 +20,8 @@ export interface StorageDriver {
 
 	registerEntity(constructor: ModelDesc);
 
+	getEntity(entity: string);
+
 	createTables(): Promise<any>;
 
 	associate(entity: string, withEntity: string, entityId, withEntityId, resolveData?): Promise<any>
