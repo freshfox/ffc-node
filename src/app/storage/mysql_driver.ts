@@ -193,6 +193,10 @@ export class MySQLDriver implements StorageDriver {
 		});
 	}
 
+	getEntity(entity: string) {
+		return this.models[entity];
+	}
+
 	private createBelongsTo(property: string, clazz: ModelDesc) {
 		let self = this;
 		return function () {
