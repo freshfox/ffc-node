@@ -55,7 +55,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 	protected abstract getJWTOptions(): JWTOptions;
 
 	async authenticate(req, res, next: Function) {
-		const user = await this.findUser(req)
+		const user = await this.findUser(req);
 		const data = await this.serialize(user);
 		jwt.sign({
 			data: data,
@@ -63,7 +63,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 
 			if (err) {
 				console.error(err);
-				throw WebError.unauthorized('Unauthorized');
+				next(WebError.unauthorized('Unauthorized'));
 			}
 			res.send({
 				token: token,
