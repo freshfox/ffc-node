@@ -35,6 +35,7 @@
     "bluebird": "^3.5.0",
     "bookshelf": "^0.10.3",
     "bookshelf-cascade-delete": "^2.0.1",
+    "bookshelf-json-columns": "^2.1.1",
     "checkit": "^0.7.0",
     "cnfg": "^1.2.0",
     "inversify": "^4.1.1",

@@ -4,6 +4,7 @@ import {Order, Pagination, StorageDriver} from '../core/storage_driver';
 import * as knex from 'knex';
 import * as bookshelf from 'bookshelf';
 import * as _ from 'lodash';
+import * as jsonColumns from 'bookshelf-json-columns';
 import {WebError} from '../error';
 import {ModelDesc, RelationDesc, RelationType} from './decorators';
 import {TYPES} from '../core/types';
@@ -18,6 +19,7 @@ export class MySQLDriver implements StorageDriver {
 	constructor(@inject(TYPES.KnexConfig) private config: KnexConfig) {
 		this.knex = knex(config);
 		this.bookshelf = bookshelf(this.knex);
+		this.bookshelf.plugin(jsonColumns);
 	}
 
 	findById(entity, id, options?) {
@@ -152,6 +154,19 @@ export class MySQLDriver implements StorageDriver {
 		let schema = {
 			tableName: desc.tableName,
 		};
+		const jsonColumns = [];
+
+		if (desc.__schema) {
+			Object.keys(desc.__schema).forEach((key) => {
+				const property = desc.__schema[key];
+				switch (property.type) {
+					case 'json':
+						jsonColumns.push(key);
+						break;
+				}
+			});
+		}
+
 		if (desc.__relations) {
 			desc.__relations.forEach((value, key) => {
 				switch (value.type) {
@@ -177,10 +192,14 @@ export class MySQLDriver implements StorageDriver {
 
 		let saveEventCallback = desc['onSave'];
 		if (saveEventCallback && typeof saveEventCallback === 'function') {
+			const self = this;
 			schema['initialize'] = function () {
+				self.bookshelf.Model.prototype.initialize.apply(this, arguments);
 				this.on('saving', async (model, attributes, options) => {
-					await saveEventCallback(attributes, options);
-					model.set(attributes);
+					let overrides = await saveEventCallback(Object.assign({}, attributes), options);
+					if (overrides) {
+						model.set(overrides);
+					}
 				});
 			}
 		}
@@ -189,7 +208,8 @@ export class MySQLDriver implements StorageDriver {
 			schema['hasTimestamps'] = true;
 		}
 		this.models[desc.tableName] = this.bookshelf.Model.extend(schema, {
-			__eager: desc.__eager
+			__eager: desc.__eager,
+			jsonColumns: jsonColumns
 		});
 	}
 
@@ -234,6 +254,7 @@ export class MySQLDriver implements StorageDriver {
 		let result = this.transformAndOmitAttachedObjects(model, data);
 		let attributes = result.attributes;
 		let relations = result.relations;
+
 		// Save the model itself
 		return model.forge(_.pick(attributes, 'id'))
 			.save(attributes)
@@ -284,9 +305,11 @@ export class MySQLDriver implements StorageDriver {
 				attributes = _.omit(attributes, key);
 			}
 			else if (_.isObject(value) && !_.isDate(value)) {
-				attributes = _.omit(attributes, key);
-				if (value.id) {
-					attributes[key + '_id'] = value.id;
+				if (!_.isArray(model.jsonColumns) || (model.jsonColumns as string[]).indexOf(key) === -1) {
+					attributes = _.omit(attributes, key);
+					if (value.id) {
+						attributes[key + '_id'] = value.id;
+					}
 				}
 			}
 			else if (value === null) {
