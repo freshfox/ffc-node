@@ -28,7 +28,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 			}
 			let token = header.split('Bearer ')[1];
 
-			jwt.verify(token, this.getSecret(), (err, decoded) => {
+			jwt.verify(token, this.getSecret(), async (err, decoded) => {
 
 				if (err) {
 					console.error(err);
@@ -36,7 +36,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 					return next(error);
 				}
 
-				const data = this.deserialize(decoded.data);
+				const data = await this.deserialize(decoded.data);
 
 				Object.assign(req, {
 					user: data
@@ -54,24 +54,22 @@ export abstract class JWTAuthenticator implements Authenticator {
 
 	protected abstract getJWTOptions(): JWTOptions;
 
-	authenticate(req, res, next: Function) {
-		return this.findUser(req)
-			.then((user) => {
-				const data = this.serialize(user);
-				jwt.sign({
-					data: data,
-				} as object, this.getSecret(), this.getJWTOptions(), (err, token) => {
+	async authenticate(req, res, next: Function) {
+		const user = await this.findUser(req)
+		const data = await this.serialize(user);
+		jwt.sign({
+			data: data,
+		} as object, this.getSecret(), this.getJWTOptions(), (err, token) => {
 
-					if (err) {
-						console.error(err);
-						throw WebError.unauthorized('Unauthorized');
-					}
-					res.send({
-						token: token,
-						ttt: null
-					});
-				});
+			if (err) {
+				console.error(err);
+				throw WebError.unauthorized('Unauthorized');
+			}
+			res.send({
+				token: token,
+				ttt: null
 			});
+		});
 	}
 
 	abstract findUser(req: Request): Promise<any>;
