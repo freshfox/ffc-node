@@ -7,7 +7,7 @@ import {StorageDriver} from '../../app/core/storage_driver';
 import {TYPES} from '../../app/index';
 import {KnexConfig, MySQLDriver} from '../../app/storage/mysql_driver';
 
-describe('Server', function() {
+describe('Server', function () {
 
 	class TestServer extends Server {
 

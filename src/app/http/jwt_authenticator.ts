@@ -36,8 +36,10 @@ export abstract class JWTAuthenticator implements Authenticator {
 					return next(error);
 				}
 
+				const data = this.deserialize(decoded.data);
+
 				Object.assign(req, {
-					user: decoded
+					user: data
 				});
 				next();
 			});
@@ -55,8 +57,9 @@ export abstract class JWTAuthenticator implements Authenticator {
 	authenticate(req, res, next: Function) {
 		return this.findUser(req)
 			.then((user) => {
+				const data = this.serialize(user);
 				jwt.sign({
-					data: user,
+					data: data,
 				} as object, this.getSecret(), this.getJWTOptions(), (err, token) => {
 
 					if (err) {
@@ -72,6 +75,14 @@ export abstract class JWTAuthenticator implements Authenticator {
 	}
 
 	abstract findUser(req: Request): Promise<any>;
+
+	serialize(data) {
+		return data;
+	}
+
+	deserialize(data) {
+		return data;
+	}
 }
 
 export interface JWTOptions {
