@@ -32,13 +32,9 @@ export class TestCase {
 		return testCase;
 	}
 
-	static createDatabaseOnly(context, container?: Container) {
+	static createDatabaseOnly(context, container: Container) {
 		let testCase = new TestCase();
-		testCase.container = new Container();
-		if (container) {
-			container.parent = testCase.container;
-			testCase.container = container;
-		}
+		testCase.container = container;
 		context.beforeEach(async () => {
 			const driver = testCase.getContainer().get<StorageDriver>(TYPES.StorageDriver);
 			await driver.clear();
