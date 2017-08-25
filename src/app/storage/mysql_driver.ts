@@ -249,51 +249,44 @@ export class MySQLDriver implements StorageDriver {
 		}
 	}
 
-	private internalSave(model, data) {
+	private async internalSave(model, data) {
 		// Extract child objects and arrays
 		let result = this.transformAndOmitAttachedObjects(model, data);
 		let attributes = result.attributes;
 		let relations = result.relations;
 
 		// Save the model itself
-		return model.forge(_.pick(attributes, 'id'))
-			.save(attributes)
-			.then(function (savedModel) {
-				return savedModel.load(_.keys(relations));
-			})
-			.then((savedModel) => {
-				let relationPromises = [];
-				_.forOwn(relations, (value, key) => {
-					let relation = savedModel.related(key);
-					let relationIds = [];
-					if (relation instanceof this.bookshelf.Collection) {
-						let foreignAttributes = {};
-						if (relation.relatedData.type !== 'belongsToMany') {
-							foreignAttributes[relation.relatedData.key('foreignKey')] = relation.relatedData.parentId;
-						}
-						for (let i = 0; i < value['length']; i++) {
-							let result = this.transformAndOmitAttachedObjects(relation.model, value[i]);
-							let p = relation.model.forge(result.attributes).save(foreignAttributes);
-							relationPromises.push(p);
-							if (result.attributes.id) {
-								relationIds.push(result.attributes.id);
-							}
-						}
-						let existingIds = _.map(relation.toJSON(), mapIds);
-						let toDelete = _.difference(existingIds, relationIds);
-						if (toDelete.length > 0) {
-							relationPromises.push(relation.model.query().whereIn('id', toDelete).del());
-						}
-					}
-				});
-				if (relationPromises.length > 0) {
-					return Promise.all(relationPromises)
-						.then(() => {
-							return savedModel;
-						})
+		const modelOnly = await model.forge(_.pick(attributes, 'id'))
+			.save(attributes);
+		const savedModel = await modelOnly.load(_.keys(relations));
+		let relationPromises = [];
+		_.forOwn(relations, (value, key) => {
+			let relation = savedModel.related(key);
+			let relationIds = [];
+			if (relation instanceof this.bookshelf.Collection) {
+				let foreignAttributes = {};
+				if (relation.relatedData.type !== 'belongsToMany') {
+					foreignAttributes[relation.relatedData.key('foreignKey')] = relation.relatedData.parentId;
 				}
-				return savedModel;
-			});
+				for (let i = 0; i < value['length']; i++) {
+					let result = this.transformAndOmitAttachedObjects(relation.model, value[i]);
+					let p = relation.model.forge(result.attributes).save(foreignAttributes);
+					relationPromises.push(p);
+					if (result.attributes.id) {
+						relationIds.push(result.attributes.id);
+					}
+				}
+				let existingIds = _.map(relation.toJSON(), mapIds);
+				let toDelete = _.difference(existingIds, relationIds);
+				if (toDelete.length > 0) {
+					relationPromises.push(relation.model.query().whereIn('id', toDelete).del());
+				}
+			}
+		});
+		if (relationPromises.length > 0) {
+			await Promise.all(relationPromises)
+		}
+		return savedModel;
 	}
 
 	private transformAndOmitAttachedObjects(model, data) {
