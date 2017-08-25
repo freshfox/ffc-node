@@ -22,6 +22,11 @@ exports.up = function(knex, Promise) {
 			table.text('content');
 			table.integer('user_id').unsigned().references('id').inTable('users');
 			table.timestamps();
+		}),
+		knex.schema.createTable('logs', function (table) {
+			table.integer('id').unsigned();
+			table.string('text');
+			table.timestamps();
 		})
 	])
 

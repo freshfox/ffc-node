@@ -256,6 +256,10 @@ export class MySQLDriver implements StorageDriver {
 		let relations = result.relations;
 
 		// Save the model itself
+
+		const instance = model.forge();
+		const idAttribute = instance.idAttribute;
+
 		const modelOnly = await model.forge(_.pick(attributes, 'id'))
 			.save(attributes);
 		const savedModel = await modelOnly.load(_.keys(relations));

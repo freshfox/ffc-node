@@ -26,6 +26,11 @@ class AccountModel {
 
 }
 
+@entity('logs')
+class LogModel {
+
+}
+
 describe('MysqlDriver', function () {
 
 	let container = new Container();
@@ -35,6 +40,7 @@ describe('MysqlDriver', function () {
 	let driver = container.get<StorageDriver>(TYPES.StorageDriver);
 	driver.registerEntity(UserModel);
 	driver.registerEntity(AccountModel);
+	driver.registerEntity(LogModel);
 
 	let testCase = TestCase.createDatabaseOnly(this, container);
 
@@ -80,6 +86,20 @@ describe('MysqlDriver', function () {
 				something: 'hello'
 			}
 		});
+	});
+
+	it.skip('should save a model without a primary key but an attribute called id', async () => {
+
+		const log = await driver.save('logs', {
+			id: 1,
+			text: 'test',
+		});
+
+		should(log).properties({
+			id: 1,
+			text: 'test'
+		});
+
 	});
 
 });
