@@ -4,6 +4,7 @@ import {Express, Request} from 'express';
 import * as jwt from 'jsonwebtoken';
 import {injectable} from 'inversify';
 import {WebError} from '../error';
+import {promisify} from 'util';
 
 @injectable()
 export abstract class JWTAuthenticator implements Authenticator {
@@ -57,17 +58,29 @@ export abstract class JWTAuthenticator implements Authenticator {
 	async authenticate(req, res, next: Function) {
 		const user = await this.findUser(req);
 		const data = await this.serialize(user);
-		jwt.sign({
-			data: data,
-		} as object, this.getSecret(), this.getJWTOptions(), (err, token) => {
 
-			if (err) {
-				console.error(err);
-				next(WebError.unauthorized('Unauthorized'));
-			}
+		try {
+			const token = await this.sign(data, this.getJWTOptions());
 			res.send({
 				token: token,
 				ttt: null
+			});
+		} catch(err) {
+			console.error(err);
+			next(WebError.unauthorized('Unauthorized'));
+		}
+	}
+
+	sign(data, options: JWTOptions) {
+		return new Promise((resolve, reject) => {
+			jwt.sign({
+				data: data,
+			} as object, this.getSecret(), options, (err, token) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(token);
+				}
 			});
 		});
 	}
