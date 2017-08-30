@@ -60,7 +60,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 		const data = await this.serialize(user);
 
 		try {
-			const token = this.sign(data, this.getJWTOptions());
+			const token = await this.sign(data, this.getJWTOptions());
 			res.send({
 				token: token,
 				ttt: null
