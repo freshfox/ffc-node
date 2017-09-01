@@ -4,7 +4,6 @@ import {Express, Request} from 'express';
 import * as jwt from 'jsonwebtoken';
 import {injectable} from 'inversify';
 import {WebError} from '../error';
-import {promisify} from 'util';
 
 @injectable()
 export abstract class JWTAuthenticator implements Authenticator {
