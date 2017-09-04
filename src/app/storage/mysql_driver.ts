@@ -55,6 +55,7 @@ export class MySQLDriver implements StorageDriver {
 		let instance = this.bootStrapConfig(this.config);
 		const name = this.config.connection.database;
 		await instance.raw(`CREATE DATABASE IF NOT EXISTS ${name}`);
+		await instance.destroy();
 
 		instance = knex(this.config);
 		await instance.migrate.latest();
