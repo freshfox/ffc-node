@@ -1,5 +1,5 @@
 import * as should from 'should';
-import {entity, property} from '../../app/storage/decorators';
+import {entity, ModelDesc, property} from '../../app/storage/decorators';
 import {KnexConfig, MySQLDriver} from '../../app/storage/mysql_driver';
 import {TestCase} from '../../app/test_case';
 import {Container} from 'inversify';
@@ -38,9 +38,9 @@ describe('MysqlDriver', function () {
 	container.bind<StorageDriver>(TYPES.StorageDriver).to(MySQLDriver).inSingletonScope();
 
 	let driver = container.get<StorageDriver>(TYPES.StorageDriver);
-	driver.registerEntity(UserModel);
-	driver.registerEntity(AccountModel);
-	driver.registerEntity(LogModel);
+	driver.registerEntity(UserModel as ModelDesc);
+	driver.registerEntity(AccountModel as ModelDesc);
+	driver.registerEntity(LogModel as ModelDesc);
 
 	let testCase = TestCase.createDatabaseOnly(this, container);
 
