@@ -14,7 +14,8 @@
     "test/",
     ".editorconfig",
     "gulpfile.js",
-    "tsconfig.json"
+    "tsconfig.json",
+    "README.md"
   ],
   "engines": {
     "node": "8.1.2"
