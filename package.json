@@ -26,11 +26,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/freshfox/ffc-node.git"
+    "url": "git@github.com:freshfox/ffc-node.git"
   },
   "author": "Dominic Bartl",
-  "license": "UNLICENSED",
-  "homepage": "https://bitbucket.org/freshfox/ffc-node#readme",
+  "license": "MIT",
+  "homepage": "https://github.com/freshfox/ffc-node",
   "dependencies": {
     "bluebird": "^3.5.0",
     "bookshelf": "^0.10.4",
