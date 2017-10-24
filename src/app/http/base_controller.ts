@@ -28,10 +28,18 @@ export class BaseController extends EventEmitter {
 	/**
 	 * Reads query parameters and creates a pagination object
 	 * @param req - The incoming request
+	 * @param maxLimit
 	 * @returns {Pagination}
 	 */
-	getPagination(req): Pagination {
-		let limit = req.query.limit;
+	getPagination(req, maxLimit?: number): Pagination {
+		let limit = parseInt(req.query.limit);
+		if (maxLimit) {
+			if (limit) {
+				limit = Math.min(limit, maxLimit);
+			} else {
+				limit = maxLimit;
+			}
+		}
 		if (limit) {
 			return {
 				limit: limit,
