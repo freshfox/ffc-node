@@ -32,6 +32,19 @@ export class TestCase {
 		return testCase;
 	}
 
+	static createServerOnly(context: any, server: Server, defaultOptions?: RequestOptions) {
+		let testCase = new TestCase();
+		testCase.defaultOptions = defaultOptions;
+		context.beforeEach(async () => {
+			testCase.server = server;
+			return server.start();
+		});
+		context.afterEach(() => {
+			return testCase.server.stop();
+		});
+		return testCase;
+	}
+
 	static createDatabaseOnly(context, container: Container) {
 		let testCase = new TestCase();
 		testCase.container = container;
