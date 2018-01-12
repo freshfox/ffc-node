@@ -1,5 +1,5 @@
 import * as request from "supertest";
-import {Container} from 'inversify';
+import {Container, interfaces} from 'inversify';
 import {Server} from './http/server';
 import {StorageDriver} from './core/storage_driver';
 import {TYPES} from './core/types';
@@ -61,6 +61,10 @@ export class TestCase {
 			return this.server.getContainer();
 		}
 		return this.container;
+	}
+
+	resolve<T>(constructorFunction: interfaces.Newable<T>): T {
+		return this.getContainer().resolve(constructorFunction);
 	}
 
 	private request() {
