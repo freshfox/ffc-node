@@ -1,7 +1,8 @@
-import "reflect-metadata";
+import 'reflect-metadata';
 export * from './core/authenticator'
 export * from './core/storage_driver'
 export * from './core/types'
+export * from './core/kernel'
 
 export * from './http/base_controller'
 export * from './http/jwt_authenticator'
