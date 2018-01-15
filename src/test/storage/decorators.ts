@@ -13,7 +13,7 @@ class PostModel {
 
 @entity('threads', ['posts.author'])
 class ThreadModel {
-	
+
 	@hasMany(PostModel as ModelDesc, true) posts: any[];
 
 }
@@ -31,7 +31,7 @@ describe('Decorators', function () {
 
 	it('should decorate a class', () => {
 
-		should(ThreadModel).eql(['posts', 'posts.author']);
+		should((ThreadModel as ModelDesc).__eager).eql(['posts', 'posts.author']);
 
 	});
 
