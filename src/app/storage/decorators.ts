@@ -1,5 +1,12 @@
-export function entity(tableName?: string) {
+export function entity(tableName?: string, loadEager?: string[]) {
 	return (constructor: Function) => {
+		if (loadEager) {
+			const desc = constructor as ModelDesc;
+			desc.__eager = desc.__eager || [];
+			loadEager.forEach((item) => {
+				desc.__eager.push(item);
+			});
+		}
 		Object.assign(constructor, {
 			tableName: tableName || constructor.name.toLowerCase() + 's'
 		})
