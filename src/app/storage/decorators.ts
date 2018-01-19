@@ -19,10 +19,10 @@ export function property(type, clazz?: new () => any) {
 	};
 }
 
-export function belongsTo(clazz: ModelDesc, loadEager?: boolean) {
+export function belongsTo(clazz: ModelDesc, loadEager?: boolean, foreignKey?: string) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
-		addRelationProperty(desc, propertyKey, RelationType.BELONGS_TO, clazz);
+		addRelationProperty(desc, foreignKey ? foreignKey : propertyKey, RelationType.BELONGS_TO, clazz);
 		if (loadEager) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
@@ -31,7 +31,7 @@ export function belongsTo(clazz: ModelDesc, loadEager?: boolean) {
 }
 
 export function timestamps() {
-	return (constructor: ModelDesc) => {
+	return (constructor: ModelDesc | any) => {
 		constructor.timestamps = true;
 	};
 }
