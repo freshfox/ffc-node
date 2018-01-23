@@ -16,13 +16,18 @@ export class Kernel {
 		this.container.bind<T>(serviceIdentifier).to(clazz).inSingletonScope();
 	};
 
-	load(...modules: ContainerModule[]) {
-		this.container.load(...modules);
-	}
-
 	bindExpressController(clazz: interfaces.Newable<any>) {
 		this.getContainer().bind<expressInterfaces.Controller>(TYPE.Controller)
 			.to(clazz).whenTargetNamed(clazz.name);
+	}
+
+	bind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): interfaces.BindingToSyntax<T> {
+		return this.container.bind(serviceIdentifier);
+	}
+
+
+	load(...modules: ContainerModule[]) {
+		this.container.load(...modules);
 	}
 
 	public getContainer() {
