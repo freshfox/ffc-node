@@ -3,7 +3,7 @@ import {Container, interfaces} from 'inversify';
 
 export abstract class BaseServiceProvider {
 
-	private kernel = new Kernel();
+	protected kernel = new Kernel();
 
 	constructor(overrides?: Kernel) {
 		this.registerDependencies();
