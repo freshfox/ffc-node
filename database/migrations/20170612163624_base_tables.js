@@ -27,7 +27,22 @@ exports.up = function(knex, Promise) {
 			table.integer('id').unsigned();
 			table.string('text');
 			table.timestamps();
-		})
+		}),
+		knex.schema.createTable('model_a', function (table) {
+			table.increments().primary();
+			table.string('text');
+			table.timestamps();
+		}),
+		knex.schema.createTable('model_b', function (table) {
+			table.increments().primary();
+			table.string('text');
+			table.timestamps();
+		}),
+		knex.schema.createTable('model_a_model_b', function (table) {
+			table.integer('model_a_id').unsigned().references('id').inTable('model_a');
+			table.integer('model_b_id').unsigned().references('id').inTable('model_b');
+			table.unique(['model_a_id', 'model_b_id']);
+		}),
 	])
 
 };

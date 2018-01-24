@@ -1,5 +1,8 @@
 export function entity(tableName?: string, loadEager?: string[]) {
 	return (constructor: Function) => {
+		console.log(constructor);
+		tableName = tableName || constructor.name.toLowerCase() + 's';
+
 		if (loadEager) {
 			const desc = constructor as ModelDesc;
 			desc.__eager = desc.__eager || [];
@@ -8,7 +11,7 @@ export function entity(tableName?: string, loadEager?: string[]) {
 			});
 		}
 		Object.assign(constructor, {
-			tableName: tableName || constructor.name.toLowerCase() + 's'
+			tableName: tableName
 		})
 	};
 }
@@ -19,10 +22,11 @@ export function property(type, clazz?: new () => any) {
 	};
 }
 
-export function belongsTo(clazz: ModelDesc, loadEager?: boolean, foreignKey?: string) {
+export function belongsTo(entity: string, loadEager?: boolean, foreignKey?: string) {
 	return (target: any, propertyKey: string) => {
+
 		let desc = target.constructor as ModelDesc;
-		addRelationProperty(desc, foreignKey ? foreignKey : propertyKey, RelationType.BELONGS_TO, clazz);
+		addRelationProperty(desc, foreignKey ? foreignKey : propertyKey, RelationType.BELONGS_TO, entity);
 		if (loadEager) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
@@ -36,10 +40,10 @@ export function timestamps() {
 	};
 }
 
-export function hasOne(clazz: ModelDesc, loadEager?: boolean) {
+export function hasOne(entity: string, loadEager?: boolean) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
-		addRelationProperty(desc, propertyKey, RelationType.HAS_ONE, clazz);
+		addRelationProperty(desc, propertyKey, RelationType.HAS_ONE, entity);
 		if (loadEager) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
@@ -47,10 +51,10 @@ export function hasOne(clazz: ModelDesc, loadEager?: boolean) {
 	};
 }
 
-export function hasMany(clazz: ModelDesc, loadEager?: boolean) {
+export function hasMany(entity: string, loadEager?: boolean) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
-		addRelationProperty(desc, propertyKey, RelationType.HAS_MANY, clazz);
+		addRelationProperty(desc, propertyKey, RelationType.HAS_MANY, entity);
 		if (loadEager) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
@@ -58,10 +62,10 @@ export function hasMany(clazz: ModelDesc, loadEager?: boolean) {
 	};
 }
 
-export function belongsToMany(clazz: ModelDesc, loadEager?: boolean, pivotAttributes?: string[]) {
+export function belongsToMany(entity: string, loadEager?: boolean, pivotAttributes?: string[]) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
-		addRelationProperty(desc, propertyKey, RelationType.BELONGS_TO_MANY, clazz, pivotAttributes);
+		addRelationProperty(desc, propertyKey, RelationType.BELONGS_TO_MANY, entity, pivotAttributes);
 		if (loadEager) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
@@ -93,11 +97,11 @@ function addSchemaProperty(proto, propertyKey: string, type: string, clazz?:  ne
 	});
 }
 
-function addRelationProperty(proto: ModelDesc, propertyKey: string, type: RelationType, clazz?:  ModelDesc, pivotAttributes?: string[]) {
+function addRelationProperty(proto: ModelDesc, propertyKey: string, type: RelationType, entity:  string, pivotAttributes?: string[]) {
 	proto.__relations = proto.__relations  || new Map<string, RelationDesc>();
 	proto.__relations.set(propertyKey, {
 		type: type,
-		clazz: clazz,
+		entity: entity,
 		pivotAttributes: pivotAttributes
 	});
 }
@@ -133,7 +137,7 @@ export interface ModelDesc {
 export interface RelationDesc {
 
 	type: RelationType,
-	clazz: ModelDesc,
+	entity: string,
 	pivotAttributes: string[]
 
 }

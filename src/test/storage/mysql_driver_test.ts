@@ -5,6 +5,7 @@ import {TestCase} from '../../app/test_case';
 import {Container} from 'inversify';
 import {StorageDriver} from '../../app/core/storage_driver';
 import {TYPES} from '../../app/core/types';
+import {belongsTo, belongsToMany, hasMany} from '../../app';
 
 @entity('users')
 class UserModel {
@@ -17,6 +18,8 @@ class UserModel {
 		};
 	}
 
+	@belongsTo('accounts') account;
+
 }
 
 @entity('accounts')
@@ -24,12 +27,29 @@ class AccountModel {
 
 	@property('json') settings;
 
+	@hasMany('users') users;
+
 }
 
 @entity('logs')
 class LogModel {
 
 }
+
+@entity('model_a')
+class ModelA {
+
+	@belongsToMany('model_b', true) private model_b;
+
+}
+
+@entity('model_b')
+class ModelB {
+
+	@belongsToMany('model_a', true) private model_a;
+
+}
+
 
 describe('MysqlDriver', function () {
 
@@ -41,6 +61,8 @@ describe('MysqlDriver', function () {
 	driver.registerEntity(UserModel as ModelDesc);
 	driver.registerEntity(AccountModel as ModelDesc);
 	driver.registerEntity(LogModel as ModelDesc);
+	driver.registerEntity(ModelA as ModelDesc);
+	driver.registerEntity(ModelB as ModelDesc);
 
 	let testCase = TestCase.createDatabaseOnly(this, container);
 
@@ -86,6 +108,45 @@ describe('MysqlDriver', function () {
 				something: 'hello'
 			}
 		});
+	});
+
+
+
+	it('should test if 2 models can depend on each other', async () => {
+
+		const a1 = await driver.save('model_a', {
+			text: 'A1',
+		});
+
+		const a2 = await driver.save('model_a', {
+			text: 'A2',
+		});
+
+		const b1 = await driver.save('model_b', {
+			text: 'B1',
+		});
+
+		const b2 = await driver.save('model_b', {
+			text: 'B2',
+		});
+
+		await driver.associate('model_a', 'model_b', a1.id, b2.id);
+		await driver.associate('model_b', 'model_a', b1.id, a2.id);
+
+		const listA = await driver.list('model_a');
+		should(listA[0]).property('id', a1.id);
+		should(listA[0].model_b[0]).property('id', b2.id);
+		should(listA[1]).property('id', a2.id);
+		should(listA[1].model_b[0]).property('id', b1.id);
+
+		const listB = await driver.list('model_b');
+		should(listB[0]).property('id', b1.id);
+		should(listB[0].model_a[0]).property('id', a2.id);
+		should(listB[1]).property('id', b2.id);
+		should(listB[1].model_a[0]).property('id', a1.id);
+
+		console.log(listA, listB);
+
 	});
 
 	it.skip('should save a model without a primary key but an attribute called id', async () => {

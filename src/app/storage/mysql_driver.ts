@@ -173,19 +173,19 @@ export class MySQLDriver implements StorageDriver {
 				switch (value.type) {
 
 					case RelationType.BELONGS_TO:
-						schema[key] = this.createBelongsTo(key, value.clazz);
+						schema[key] = this.createBelongsTo(key, value.entity);
 						break;
 
 					case RelationType.HAS_ONE:
-						schema[key] = this.createHasOne(key, value.clazz);
+						schema[key] = this.createHasOne(key, value.entity);
 						break;
 
 					case RelationType.HAS_MANY:
-						schema[key] = this.createHasMany(key, value.clazz);
+						schema[key] = this.createHasMany(key, value.entity);
 						break;
 
 					case RelationType.BELONGS_TO_MANY:
-						schema[key] = this.createBelongsToMany(key, value.clazz, value);
+						schema[key] = this.createBelongsToMany(key, value.entity, value);
 						break;
 				}
 			})
@@ -218,31 +218,31 @@ export class MySQLDriver implements StorageDriver {
 		return this.models[entity];
 	}
 
-	private createBelongsTo(property: string, clazz: ModelDesc) {
+	private createBelongsTo(property: string, entity: string) {
 		let self = this;
 		return function () {
-			return this.belongsTo(self.models[clazz.tableName], `${property}_id`)
+			return this.belongsTo(self.models[entity], `${property}_id`)
 		}
 	}
 
-	private createHasOne(property: string, clazz: ModelDesc) {
+	private createHasOne(property: string, entity: string) {
 		let self = this;
 		return function () {
-			return this.hasOne(self.models[clazz.tableName])
+			return this.hasOne(self.models[entity])
 		}
 	}
 
-	private createHasMany(property: string, clazz: ModelDesc) {
+	private createHasMany(property: string, entity: string) {
 		let self = this;
 		return function () {
-			return this.hasMany(self.models[clazz.tableName]);
+			return this.hasMany(self.models[entity]);
 		}
 	}
 
-	private createBelongsToMany(property: string, clazz: ModelDesc, relation: RelationDesc) {
+	private createBelongsToMany(property: string, entity: string, relation: RelationDesc) {
 		let self = this;
 		return function () {
-			let rel = this.belongsToMany(self.models[clazz.tableName]);
+			let rel = this.belongsToMany(self.models[entity]);
 			if (relation.pivotAttributes) {
 				rel.withPivot(relation.pivotAttributes);
 			}
