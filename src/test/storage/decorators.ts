@@ -14,7 +14,7 @@ class PostModel {
 @entity('threads', ['posts.author'])
 class ThreadModel {
 
-	@hasMany(PostModel as ModelDesc, true) posts: any[];
+	@hasMany('posts', true) posts: any[];
 
 }
 
