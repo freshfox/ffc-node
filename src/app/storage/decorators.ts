@@ -1,6 +1,5 @@
 export function entity(tableName?: string, loadEager?: string[]) {
 	return (constructor: Function) => {
-		console.log(constructor);
 		tableName = tableName || constructor.name.toLowerCase() + 's';
 
 		if (loadEager) {
