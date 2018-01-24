@@ -105,6 +105,10 @@ export abstract class BaseRepository<T> {
 		return this.dataStore.associate(this.model.tableName, model.tableName, id, withId, resolveData);
 	}
 
+	dissociate(model, id, withId) {
+		return this.dataStore.dissociate(this.model.tableName, model.tableName, id, withId);
+	}
+
 	getEntity(model: ModelDesc) {
 		return this.dataStore.getEntity(model.tableName);
 	}

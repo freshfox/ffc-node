@@ -26,6 +26,8 @@ export interface StorageDriver {
 
 	associate(entity: string, withEntity: string, entityId, withEntityId, resolveData?): Promise<any>
 
+	dissociate(entity: string, withEntity: string, entityId, withEntityId): Promise<any>
+
 	clear();
 
 }

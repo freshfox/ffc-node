@@ -151,6 +151,17 @@ export class MySQLDriver implements StorageDriver {
 		}
 	}
 
+	dissociate(entity: string, withEntity: string, entityId, withEntityId) {
+		const instance = this.models[entity].forge({id: entityId});
+		const withInstance = this.models[withEntity].forge({id: withEntityId});
+
+		let relation = instance.related(withInstance.tableName);
+		if (!relation) {
+			throw WebError.badRequest('Can not dissociate models');
+		}
+		return relation.detach(withInstance);
+	}
+
 	registerEntity(desc: ModelDesc) {
 		let schema = {
 			tableName: desc.tableName,
