@@ -5,6 +5,7 @@ import * as knex from 'knex';
 import * as bookshelf from 'bookshelf';
 import * as _ from 'lodash';
 import * as jsonColumns from 'bookshelf-json-columns';
+import * as dependents from 'bookshelf-cascade-delete';
 import {WebError} from '../error';
 import {ModelDesc, RelationDesc, RelationType} from './decorators';
 import {TYPES} from '../core/types';
@@ -20,6 +21,7 @@ export class MySQLDriver implements StorageDriver {
 		this.knex = knex(config);
 		this.bookshelf = bookshelf(this.knex);
 		this.bookshelf.plugin(jsonColumns);
+		this.bookshelf.plugin(dependents);
 	}
 
 	findById(entity, id, options?) {
@@ -219,9 +221,11 @@ export class MySQLDriver implements StorageDriver {
 		if (desc.timestamps) {
 			schema['hasTimestamps'] = true;
 		}
+
 		this.models[desc.tableName] = this.bookshelf.Model.extend(schema, {
 			__eager: desc.__eager,
-			jsonColumns: jsonColumns
+			jsonColumns: jsonColumns,
+			dependents: desc.__dependents
 		});
 	}
 

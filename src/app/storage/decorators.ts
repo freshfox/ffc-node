@@ -50,7 +50,7 @@ export function hasOne(entity: string, loadEager?: boolean) {
 	};
 }
 
-export function hasMany(entity: string, loadEager?: boolean) {
+export function hasMany(entity: string, loadEager?: boolean, dependent?: boolean) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
 		addRelationProperty(desc, propertyKey, RelationType.HAS_MANY, entity);
@@ -58,16 +58,22 @@ export function hasMany(entity: string, loadEager?: boolean) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
 		}
+		if (dependent) {
+			addDependentRelation(desc, propertyKey);
+		}
 	};
 }
 
-export function belongsToMany(entity: string, loadEager?: boolean, pivotAttributes?: string[]) {
+export function belongsToMany(entity: string, loadEager?: boolean, pivotAttributes?: string[], dependent?: boolean) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
 		addRelationProperty(desc, propertyKey, RelationType.BELONGS_TO_MANY, entity, pivotAttributes);
 		if (loadEager) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
+		}
+		if (dependent) {
+			addDependentRelation(desc, propertyKey);
 		}
 	};
 }
@@ -83,6 +89,11 @@ export function key(type) {
 	return (target: any, propertyKey: string) => {
 		addKeyProperty(target.constructor, propertyKey, type)
 	};
+}
+
+function addDependentRelation(desc: ModelDesc, property: string) {
+	desc.__dependents = desc.__dependents || [];
+	desc.__dependents.push(property);
 }
 
 function addSchemaProperty(proto, propertyKey: string, type: string, clazz?:  new () => any) {
@@ -130,6 +141,7 @@ export interface ModelDesc {
 	__relations?: Map<string, RelationDesc>
 	__keys?: object;
 	__eager?: string[]
+	__dependents?: string[]
 
 }
 
