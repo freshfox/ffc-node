@@ -16,5 +16,7 @@ export * from './storage/decorators'
 export * from './storage/mysql_driver'
 export * from './storage/base_repository'
 
+export * from './utils/crypto_utils'
+
 export * from './error';
 export * from './test_case'
