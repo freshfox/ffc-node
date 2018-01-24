@@ -145,8 +145,6 @@ describe('MysqlDriver', function () {
 		should(listB[1]).property('id', b2.id);
 		should(listB[1].model_a[0]).property('id', a1.id);
 
-		console.log(listA, listB);
-
 	});
 
 	it.skip('should save a model without a primary key but an attribute called id', async () => {
