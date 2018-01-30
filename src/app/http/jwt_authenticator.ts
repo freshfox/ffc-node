@@ -9,7 +9,16 @@ import {WebError} from '../error';
 export abstract class JWTAuthenticator implements Authenticator {
 
 	private unauthenticatedPaths: string[];
+	private middleware: (req, res, next) => void;
 
+	constructor() {
+		this.middleware = this.handle.bind(this);
+	}
+
+
+	/**
+	 * @deprecated Use #getMiddleware() instead
+	 */
 	setup(app: Express) {
 		app.use(this.getMiddleware());
 	}
@@ -48,7 +57,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 	}
 
 	getMiddleware(): (req, res, next) => void {
-		return this.handle.bind(this);
+		return this.middleware;
 	}
 
 	protected setUnauthenticatedPaths(paths: string[]) {
