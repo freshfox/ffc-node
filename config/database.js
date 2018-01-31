@@ -13,5 +13,9 @@ module.exports = {
 	},
 	seeds: {
 		directory: 'database/seeds'
+	},
+	plugins: {
+		cascadeDelete: true,
+		jsonColumns: true
 	}
 };
