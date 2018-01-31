@@ -20,8 +20,14 @@ export class MySQLDriver implements StorageDriver {
 	constructor(@inject(TYPES.KnexConfig) private config: KnexConfig) {
 		this.knex = knex(config);
 		this.bookshelf = bookshelf(this.knex);
-		this.bookshelf.plugin(jsonColumns);
-		this.bookshelf.plugin(dependents);
+		if (config.plugins) {
+			if (config.plugins.cascadeDelete) {
+				this.bookshelf.plugin(dependents);
+			}
+			if (config.plugins.jsonColumns) {
+				this.bookshelf.plugin(jsonColumns);
+			}
+		}
 	}
 
 	findById(entity, id, options?) {
@@ -354,6 +360,10 @@ export interface KnexConfig {
 	},
 	seeds: {
 		directory: string
+	},
+	plugins?: {
+		cascadeDelete?: boolean,
+		jsonColumns?: boolean
 	}
 }
 
