@@ -147,6 +147,20 @@ describe('MysqlDriver', function () {
 
 	});
 
+	it('should destroy a model without an id', async () => {
+
+		await driver.save('model_a', { text: 'u1' });
+		await driver.save('model_a', { text: 'u2' });
+		await driver.save('model_a', { text: 'u3' });
+		await driver.save('model_a', { text: 'u1' });
+
+		await driver.destroy('model_a', {text: 'u1'});
+
+		const all = await driver.list('model_a');
+		should(all).length(2);
+
+	});
+
 	it.skip('should save a model without a primary key but an attribute called id', async () => {
 
 		const log = await driver.save('logs', {

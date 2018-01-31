@@ -96,7 +96,12 @@ export class MySQLDriver implements StorageDriver {
 	}
 
 	destroy(entity: string, attributes) {
-		return this.models[entity].forge(attributes).destroy();
+		const where = _.omit(attributes, 'id');
+		let model = this.models[entity].forge(_.pick(attributes, 'id'));
+		if (Object.keys(where).length) {
+			model = model.where(where);
+		}
+		return model.destroy();
 	};
 
 	query(entity: string, filter, options?) {
