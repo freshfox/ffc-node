@@ -16,4 +16,15 @@ export class PromiseUtils {
 		}, {});
 	}
 
+	async fromCallback(callback: (err?: Error, result?: any) => any, asyncTask: () => Promise<any>) {
+
+		try {
+			const result = await asyncTask();
+			callback(undefined, result);
+		} catch (err) {
+			callback(err);
+		}
+
+	}
+
 }
