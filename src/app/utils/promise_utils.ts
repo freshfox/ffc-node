@@ -16,7 +16,7 @@ export class PromiseUtils {
 		}, {});
 	}
 
-	async fromCallback(callback: (err?: Error, result?: any) => any, asyncTask: () => Promise<any>) {
+	static async fromCallback(callback: (err?: Error, result?: any) => any, asyncTask: () => Promise<any>) {
 
 		try {
 			const result = await asyncTask();
