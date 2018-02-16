@@ -2,8 +2,14 @@ import * as Checkit from 'checkit';
 import * as BPromise from 'bluebird';
 import * as _ from 'lodash';
 import {WebError} from "../error";
+import {injectable} from 'inversify';
 
+@injectable()
 export class Validator {
+
+	validate(rules, data) {
+		return Validator.validate(rules, data);
+	}
 
 	/**
 	 * Validates a given data set against the rules
@@ -77,11 +83,15 @@ export class Validator {
 		let stack = {};
 		err.each(function (fieldError) {
 			stack[fieldError.key] = [];
-			fieldError.each(function (singleErr) {
-				stack[fieldError.key].push(singleErr.rule)
+			fieldError.each((singleErr) => {
+				stack[fieldError.key].push(this.getEnum(singleErr.rule))
 			});
 		});
 		return stack;
+	}
+
+	static getEnum(rule: string) {
+		return rule;
 	}
 
 }
