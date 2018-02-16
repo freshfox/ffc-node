@@ -8,16 +8,6 @@ import {injectable} from 'inversify';
 export class Validator {
 
 	validate(rules, data) {
-		return Validator.validate(rules, data);
-	}
-
-	/**
-	 * Validates a given data set against the rules
-	 * @param rules
-	 * @param data
-	 * @return {Promise}
-	 */
-	static validate(rules, data) {
 
 		let subRules = _.pickBy(rules, _.isPlainObject);
 		rules = _.omitBy(rules, _.isPlainObject);
@@ -79,9 +69,9 @@ export class Validator {
 		Checkit.Validator.prototype[name] = callback;
 	};
 
-	private static createError(err) {
+	private createError(err) {
 		let stack = {};
-		err.each(function (fieldError) {
+		err.each((fieldError) => {
 			stack[fieldError.key] = [];
 			fieldError.each((singleErr) => {
 				stack[fieldError.key].push(this.getEnum(singleErr.rule))
@@ -90,7 +80,7 @@ export class Validator {
 		return stack;
 	}
 
-	static getEnum(rule: string) {
+	getEnum(rule: string) {
 		return rule;
 	}
 
