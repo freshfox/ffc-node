@@ -20,19 +20,21 @@ export class Validator {
 				rules[key] = val._self;
 				val = _.omit(val, '_self');
 			}
-			for (let i = 0; i < data[key].length; i++) {
-				let result = new Checkit(val).runSync(data[key][i]);
-				validatedObject[key] = validatedObject[key] || [];
-				subErrors[key] = subErrors[key] || [];
-				if (result[0]) {
-					let err = this.createError(result[0]);
-					hasSubError = true;
-					subErrors[key].push(err);
-				} else {
-					validatedObject[key].push(result[1]);
-					subErrors[key].push({});
-				}
+			if (data[key]) {
+				for (let i = 0; i < data[key].length; i++) {
+					let result = new Checkit(val).runSync(data[key][i]);
+					validatedObject[key] = validatedObject[key] || [];
+					subErrors[key] = subErrors[key] || [];
+					if (result[0]) {
+						let err = this.createError(result[0]);
+						hasSubError = true;
+						subErrors[key].push(err);
+					} else {
+						validatedObject[key].push(result[1]);
+						subErrors[key].push({});
+					}
 
+				}
 			}
 		});
 
