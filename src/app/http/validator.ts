@@ -15,7 +15,7 @@ export class Validator {
 		let validatedObject = {};
 		let subErrors = {};
 		let hasSubError = false;
-		_.forOwn(subRules, function (val, key) {
+		_.forOwn(subRules, (val, key) => {
 			if (val._self) {
 				rules[key] = val._self;
 				val = _.omit(val, '_self');
