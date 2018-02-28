@@ -45,7 +45,7 @@
     "inversify": "^4.3.0",
     "inversify-express-utils": "^5.2.0",
     "jsonwebtoken": "^8.1.1",
-    "knex": "^0.14.2",
+    "knex": "^0.14.4",
     "lodash": "^4.17.4",
     "mysql": "^2.14.1",
     "node-env-file": "^0.1.8",
