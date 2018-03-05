@@ -4,7 +4,7 @@ import {injectable} from 'inversify';
 import {Order, OrderDirection, Pagination} from '../core/storage_driver';
 
 @injectable()
-export class BaseController extends EventEmitter {
+export class BaseController {
 
 	/**
 	 * Reads query parameters and creates a sorting object

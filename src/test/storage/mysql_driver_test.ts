@@ -175,4 +175,17 @@ describe('MysqlDriver', function () {
 
 	});
 
+	it('should save and query data', async () => {
+
+		await driver.save('model_a', {text: 'u1'});
+
+		const list = await driver.query('model_a', (qb) => {
+			return qb.where('text', '=', 'u1');
+		});
+
+		should(list).length(1);
+		should(list[0].text).eql('u1');
+
+	});
+
 });

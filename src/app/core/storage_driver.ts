@@ -1,4 +1,5 @@
 import {ModelDesc} from '../storage/decorators';
+import {QueryBuilder as KnexQueryBuilder} from 'knex';
 
 export interface StorageDriver {
 
@@ -16,7 +17,7 @@ export interface StorageDriver {
 
 	createQuery(attributes, order: Order, pagination: Pagination);
 
-	query(entity: string, filter, options?);
+	query(entity: string, filter: Query, options?);
 
 	registerEntity(constructor: ModelDesc);
 
@@ -32,13 +33,9 @@ export interface StorageDriver {
 
 }
 
-export interface Query {
+export type Query = (qb: QueryBuilder) => void;
 
-	order?: Order;
-	pagination?: Pagination;
-
-
-}
+export type QueryBuilder = KnexQueryBuilder;
 
 export interface Order {
 

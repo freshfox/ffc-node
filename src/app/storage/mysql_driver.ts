@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import {inject, injectable} from 'inversify';
-import {Order, Pagination, StorageDriver} from '../core/storage_driver';
+import {Order, Pagination, StorageDriver, Query} from '../core/storage_driver';
 import * as knex from 'knex';
 import * as bookshelf from 'bookshelf';
 import * as _ from 'lodash';
@@ -60,7 +60,7 @@ export class MySQLDriver implements StorageDriver {
 
 	async createTables(): Promise<any> {
 
-		let instance = this.bootStrapConfig(this.config);
+		let instance = MySQLDriver.bootStrapConfig(this.config);
 		const name = this.config.connection.database;
 		await instance.raw(`CREATE DATABASE IF NOT EXISTS ${name}`);
 		await instance.destroy();
@@ -72,13 +72,13 @@ export class MySQLDriver implements StorageDriver {
 
 	async clear() {
 		let name = this.config.connection.database;
-		let instance = this.bootStrapConfig(this.config);
+		let instance = MySQLDriver.bootStrapConfig(this.config);
 		await instance.raw('DROP DATABASE IF EXISTS ' + name);
 		await instance.raw('CREATE DATABASE ' + name);
 		await instance.destroy();
 	}
 
-	private bootStrapConfig(dbConfig: any) {
+	private static bootStrapConfig(dbConfig: any) {
 		return knex({
 			client: 'mysql',
 			connection: _.pick(dbConfig.connection, 'host', 'user', 'password', 'charset')
@@ -104,7 +104,7 @@ export class MySQLDriver implements StorageDriver {
 		return model.destroy();
 	};
 
-	query(entity: string, filter, options?) {
+	query(entity: string, filter: Query, options?) {
 		return this.models[entity].collection()
 			.query(filter)
 			.fetch({

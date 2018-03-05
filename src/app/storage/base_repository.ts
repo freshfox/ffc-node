@@ -2,6 +2,7 @@ import {inject, injectable} from 'inversify';
 import {Order, Pagination, StorageDriver, TYPES} from '../';
 import {WebError} from '../error';
 import {ModelDesc} from './decorators';
+import {Query, QueryBuilder} from './mysql_driver';
 
 @injectable()
 export abstract class BaseRepository<T> {
@@ -49,13 +50,13 @@ export abstract class BaseRepository<T> {
 		return this.dataStore.list(this.model.tableName, attributes, order, pagination, options);
 	}
 
-	query(filter?, options?): Promise<T[]> {
+	query(filter?: Query, options?): Promise<T[]> {
 		return this.dataStore.query(this.model.tableName, filter, options);
 	}
 
 	batchQuery(callback: (items: T[]) => Promise<any>, queryBuilderCallback: (qb) => any, batchSize: number, options?) {
 		const doBatch = async (i) => {
-			let entries = await this.query((qb) => {
+			let entries = await this.query((qb: QueryBuilder) => {
 				qb.limit(batchSize);
 				qb.offset(i * batchSize);
 				queryBuilderCallback(qb);

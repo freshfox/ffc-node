@@ -53,6 +53,14 @@
     "@types/events" "*"
     "@types/node" "*"
 
+"@types/knex@^0.14.8":
+  version "0.14.8"
+  resolved "https://registry.yarnpkg.com/@types/knex/-/knex-0.14.8.tgz#cb8eaf769c2494f9e95bf4de268b8cf2f2d52a93"
+  dependencies:
+    "@types/bluebird" "*"
+    "@types/events" "*"
+    "@types/node" "*"
+
 "@types/lodash@*":
   version "4.14.95"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.95.tgz#02c170690719bbaca8293d9c8cdcccb565728081"
