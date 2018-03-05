@@ -101,11 +101,11 @@ export abstract class BaseRepository<T> {
 		return doBatch(0);
 	}
 
-	associate(model, id, withId, resolveData?) {
+	associate(model: any, id: number, withId: number, resolveData?: Function) {
 		return this.dataStore.associate(this.model.tableName, model.tableName, id, withId, resolveData);
 	}
 
-	dissociate(model, id, withId) {
+	dissociate(model: any, id: number, withId: number) {
 		return this.dataStore.dissociate(this.model.tableName, model.tableName, id, withId);
 	}
 
