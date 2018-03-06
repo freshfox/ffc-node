@@ -1,8 +1,7 @@
 import {inject, injectable} from 'inversify';
-import {Order, Pagination, StorageDriver, TYPES} from '../';
+import {Order, Pagination, Query, QueryBuilder, StorageDriver, TYPES} from '../';
 import {WebError} from '../error';
 import {ModelDesc} from './decorators';
-import {Query, QueryBuilder} from './mysql_driver';
 
 @injectable()
 export abstract class BaseRepository<T> {

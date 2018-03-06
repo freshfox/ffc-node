@@ -35,9 +35,9 @@ export class MySQLDriver implements StorageDriver {
 	}
 
 	find(entity: string, data: any, options?): Promise<any> {
-		return this.models[entity].forge(data)
+		return MySQLDriver.getModel(this, entity).forge(data)
 			.fetch({
-				withRelated: (options && options.withRelated) ? options.withRelated : this.models[entity].__eager
+				withRelated: (options && options.withRelated) ? options.withRelated : MySQLDriver.getModel(this, entity).__eager
 			})
 			.then(function (model) {
 				if (!model) {
@@ -52,7 +52,7 @@ export class MySQLDriver implements StorageDriver {
 	}
 
 	save(entity: string, data: any): Promise<any> {
-		return this.internalSave(this.models[entity], data)
+		return this.internalSave(MySQLDriver.getModel(this, entity), data)
 			.then((model) => {
 				return this.findById(entity, model.get('id'));
 			});
@@ -86,7 +86,7 @@ export class MySQLDriver implements StorageDriver {
 	}
 
 	count(entity: string, attributes?) {
-		return this.models[entity].forge()
+		return MySQLDriver.getModel(this, entity).forge()
 			.query()
 			.where(attributes || {})
 			.count()
@@ -97,7 +97,7 @@ export class MySQLDriver implements StorageDriver {
 
 	destroy(entity: string, attributes) {
 		const where = _.omit(attributes, 'id');
-		let model = this.models[entity].forge(_.pick(attributes, 'id'));
+		let model = MySQLDriver.getModel(this, entity).forge(_.pick(attributes, 'id'));
 		if (Object.keys(where).length) {
 			model = model.where(where);
 		}
@@ -105,10 +105,10 @@ export class MySQLDriver implements StorageDriver {
 	};
 
 	query(entity: string, filter: Query, options?) {
-		return this.models[entity].collection()
+		return MySQLDriver.getModel(this, entity).collection()
 			.query(filter)
 			.fetch({
-				withRelated: (options && options.withRelated) ? options.withRelated : this.models[entity].__eager
+				withRelated: (options && options.withRelated) ? options.withRelated : MySQLDriver.getModel(this, entity).__eager
 			})
 			.then(function (models) {
 				if (!models) {
@@ -141,8 +141,8 @@ export class MySQLDriver implements StorageDriver {
 			throw WebError.notFound('Unable to find model')
 		}
 
-		const instance = this.models[entity].forge({id: entityId});
-		const withInstance = this.models[withEntity].forge({id: withEntityId});
+		const instance = MySQLDriver.getModel(this, entity).forge({id: entityId});
+		const withInstance = MySQLDriver.getModel(this, withEntity).forge({id: withEntityId});
 
 		const relation = instance.related(withInstance.tableName);
 		if (!relation) {
@@ -165,8 +165,8 @@ export class MySQLDriver implements StorageDriver {
 	}
 
 	dissociate(entity: string, withEntity: string, entityId, withEntityId) {
-		const instance = this.models[entity].forge({id: entityId});
-		const withInstance = this.models[withEntity].forge({id: withEntityId});
+		const instance = MySQLDriver.getModel(this, entity).forge({id: entityId});
+		const withInstance = MySQLDriver.getModel(this, withEntity).forge({id: withEntityId});
 
 		let relation = instance.related(withInstance.tableName);
 		if (!relation) {
@@ -241,39 +241,49 @@ export class MySQLDriver implements StorageDriver {
 	}
 
 	getEntity(entity: string) {
-		return this.models[entity];
+		return MySQLDriver.getModel(this, entity);
 	}
+
+
 
 	private createBelongsTo(property: string, entity: string) {
 		let self = this;
 		return function () {
-			return this.belongsTo(self.models[entity], `${property}_id`)
+			return this.belongsTo(MySQLDriver.getModel(self, entity), `${property}_id`)
 		}
 	}
 
 	private createHasOne(property: string, entity: string) {
 		let self = this;
 		return function () {
-			return this.hasOne(self.models[entity])
+			return this.hasOne(MySQLDriver.getModel(self, entity))
 		}
 	}
 
 	private createHasMany(property: string, entity: string) {
 		let self = this;
 		return function () {
-			return this.hasMany(self.models[entity]);
+			return this.hasMany(MySQLDriver.getModel(self, entity));
 		}
 	}
 
 	private createBelongsToMany(property: string, entity: string, relation: RelationDesc) {
 		let self = this;
 		return function () {
-			let rel = this.belongsToMany(self.models[entity]);
+			let rel = this.belongsToMany(MySQLDriver.getModel(self, entity));
 			if (relation.pivotAttributes) {
 				rel.withPivot(relation.pivotAttributes);
 			}
 			return rel;
 		}
+	}
+
+	private static getModel(self: MySQLDriver, entity: string) {
+		const model = self.models[entity];
+		if (!model) {
+			throw WebError.internalServerError()
+		}
+		return model;
 	}
 
 	private async internalSave(model, data) {

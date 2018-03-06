@@ -5,7 +5,7 @@ import {TestCase} from '../../app/test_case';
 import {Container} from 'inversify';
 import {StorageDriver} from '../../app/core/storage_driver';
 import {TYPES} from '../../app/core/types';
-import {belongsTo, belongsToMany, hasMany} from '../../app';
+import {belongsTo, belongsToMany, hasMany, WebError} from '../../app';
 
 @entity('users')
 class UserModel {
@@ -185,6 +185,19 @@ describe('MysqlDriver', function () {
 
 		should(list).length(1);
 		should(list[0].text).eql('u1');
+
+	});
+
+	it('should throw an error of model can not be found', async () => {
+
+		try {
+			await driver.save('model_xxx', {text: 'u1'});
+			// noinspection ExceptionCaughtLocallyJS
+			throw new Error('should not happen');
+		} catch (err) {
+			should(err).instanceOf(WebError);
+			should(err.code).eql(500);
+		}
 
 	});
 
