@@ -78,7 +78,7 @@ describe('MysqlDriver', function () {
 		should(user).property('firstname', 'test_saved');
 	});
 
-	it('should save json data', async () => {
+	it('should save a JSON object', async () => {
 
 		const account = await driver.save('accounts', {
 			test: '',
@@ -110,7 +110,19 @@ describe('MysqlDriver', function () {
 		});
 	});
 
+	it('should be able so save a JSON array', async () => {
 
+		const account = await driver.save('accounts', {
+			test: '',
+			settings: ['test1', 'test2']
+		});
+
+		should(account).property('id');
+		should(account.settings).instanceOf(Array);
+		should(account.settings[0]).eql('test1');
+		should(account.settings[1]).eql('test2');
+
+	});
 
 	it('should test if 2 models can depend on each other', async () => {
 

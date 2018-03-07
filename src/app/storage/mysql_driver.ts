@@ -334,22 +334,21 @@ export class MySQLDriver implements StorageDriver {
 		let relations = {};
 		let attributes = Object.assign({}, data);
 		_.forOwn(attributes, function (value, key) {
-			if (_.isArray(value)) {
-				relations[key] = value;
-				attributes = _.omit(attributes, key);
-			}
-			else if (_.isObject(value) && !_.isDate(value)) {
-				if (!_.isArray(model.jsonColumns) || (model.jsonColumns as string[]).indexOf(key) === -1) {
+			if (!_.isArray(model.jsonColumns) || (model.jsonColumns as string[]).indexOf(key) === -1) {
+				if (_.isArray(value)) {
+					relations[key] = value;
+					attributes = _.omit(attributes, key);
+				} else if (_.isObject(value) && !_.isDate(value)) {
 					attributes = _.omit(attributes, key);
 					if (value.id) {
 						attributes[key + '_id'] = value.id;
 					}
-				}
-			}
-			else if (value === null) {
-				if (_.includes(model.__eager, key)) {
-					attributes = _.omit(attributes, key);
-					attributes[key + '_id'] = null;
+
+				} else if (value === null) {
+					if (_.includes(model.__eager, key)) {
+						attributes = _.omit(attributes, key);
+						attributes[key + '_id'] = null;
+					}
 				}
 			}
 		});
