@@ -22,7 +22,7 @@ export class LocalFileSystem implements IFilesystem {
 	}
 
 	getUploadUrl(path: string): string {
-		throw new Error('Method not implemented.');
+		return null;
 	}
 
 	createWriteStream(file: string) {
