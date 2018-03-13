@@ -21,7 +21,7 @@ export class LocalFileSystem implements IFilesystem {
 		return this.ensureDir(this.getPath(path));
 	}
 
-	getUploadUrl(path: string) {
+	getUploadUrl(path: string): string {
 		throw new Error('Method not implemented.');
 	}
 
