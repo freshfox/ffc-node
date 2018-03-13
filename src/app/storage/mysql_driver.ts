@@ -281,6 +281,7 @@ export class MySQLDriver implements StorageDriver {
 	private static getModel(self: MySQLDriver, entity: string) {
 		const model = self.models[entity];
 		if (!model) {
+			console.error('Unable to find entity ' + entity);
 			throw WebError.internalServerError()
 		}
 		return model;

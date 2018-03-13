@@ -87,17 +87,12 @@ export class S3FileSystem implements IFilesystem {
 		}).promise();
 	}
 
-	getUploadUrl(path) {
-		const signedUrlExpireSeconds = 60 * 10;
-		let upload = this.s3Client.getSignedUrl('putObject', {
+	getUploadUrl(path: string): string {
+		return this.s3Client.getSignedUrl('putObject', {
 			Bucket: this.config.s3Config.bucket,
 			Key: path,
-			Expires: signedUrlExpireSeconds
+			Expires: this.config.s3Config.uploadUrlExpireSeconds || (60 * 10)
 		});
-		return {
-			download: this.getDownloadUrl(path),
-			upload: upload,
-		}
 	}
 
 	getDownloadUrl(path) {

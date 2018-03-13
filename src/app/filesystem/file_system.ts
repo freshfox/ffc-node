@@ -5,7 +5,8 @@ export interface FilesystemConfig {
 	tmpDirectory?: string;
 	s3Config?: {
 		bucket: string,
-		region: string
+		region: string,
+		uploadUrlExpireSeconds? : number
 	}
 }
 
@@ -27,7 +28,7 @@ export interface IFilesystem {
 
 	writeStreamToFile(path: string, stream: stream.Readable, options?): Promise<any>;
 
-	getUploadUrl(path: string);
+	getUploadUrl(path: string): string;
 
 	unlink(path: string): Promise<any>;
 
