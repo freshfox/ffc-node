@@ -61,6 +61,7 @@
     "aws-sdk": "^2.205.0",
     "body-parser": "^1.17.2",
     "express": "^4.15.4",
+    "firebase-admin": "^5.11.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-tsb": "^2.0.4",

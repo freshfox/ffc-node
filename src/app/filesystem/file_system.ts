@@ -7,12 +7,16 @@ export interface FilesystemConfig {
 		bucket: string,
 		region: string,
 		uploadUrlExpireSeconds? : number
+	},
+	firebaseConfig?: {
+		bucket: string
 	}
 }
 
 export enum FilesystemType {
 	LOCAL = 'local',
 	S3 = 's3',
+	FIREBASE = 'firebase',
 	TMP = 'tmp'
 }
 
