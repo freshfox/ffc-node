@@ -1,4 +1,4 @@
-import {LocalFileSystem} from './local_filesystem';
+import {LocalFileSystem} from './local_file_system';
 import {TYPES} from '../core/types';
 import {FilesystemConfig, FilesystemType, IFilesystem} from './file_system';
 import {S3FileSystem} from './s3_file_system';

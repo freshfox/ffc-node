@@ -1,4 +1,4 @@
-import {LocalFileSystem} from './local_filesystem';
+import {LocalFileSystem} from './local_file_system';
 import * as path from 'path';
 import {inject, injectable} from 'inversify';
 import {FilesystemConfig} from './file_system';
