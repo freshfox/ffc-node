@@ -1,7 +1,6 @@
 import "reflect-metadata";
-import {EventEmitter} from "events";
 import {injectable} from 'inversify';
-import {Order, OrderDirection, Pagination} from '../core/storage_driver';
+import {Order, Pagination} from '../core/storage_driver';
 
 @injectable()
 export class BaseController {
@@ -19,7 +18,7 @@ export class BaseController {
 
 			return {
 				column: req.query.sort,
-				direction: isValidSort ? dir : OrderDirection.ASC,
+				direction: isValidSort ? dir : 'asc',
 			};
 		}
 		return null;
