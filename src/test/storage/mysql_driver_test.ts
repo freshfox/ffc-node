@@ -39,17 +39,16 @@ class LogModel {
 @entity('model_a')
 class ModelA {
 
-	@belongsToMany('model_b', true) private model_b;
+	@belongsToMany('model_b', {loadEager: true}) private model_b;
 
 }
 
 @entity('model_b')
 class ModelB {
 
-	@belongsToMany('model_a', true) private model_a;
+	@belongsToMany('model_a', {loadEager: true}) private model_a;
 
 }
-
 
 describe('MysqlDriver', function () {
 

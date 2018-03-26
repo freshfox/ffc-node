@@ -205,7 +205,7 @@ export class MySQLDriver implements StorageDriver {
 						break;
 
 					case RelationType.HAS_MANY:
-						schema[key] = this.createHasMany(key, value.entity);
+						schema[key] = this.createHasMany(key, value.entity, value.order);
 						break;
 
 					case RelationType.BELONGS_TO_MANY:
@@ -260,10 +260,14 @@ export class MySQLDriver implements StorageDriver {
 		}
 	}
 
-	private createHasMany(property: string, entity: string) {
+	private createHasMany(property: string, entity: string, order?: Order) {
 		let self = this;
 		return function () {
-			return this.hasMany(MySQLDriver.getModel(self, entity));
+			let rel = this.hasMany(MySQLDriver.getModel(self, entity));
+			if (order) {
+				rel = rel.query('orderBy', order.column, order.direction);
+			}
+			return rel;
 		}
 	}
 
@@ -272,7 +276,10 @@ export class MySQLDriver implements StorageDriver {
 		return function () {
 			let rel = this.belongsToMany(MySQLDriver.getModel(self, entity));
 			if (relation.pivotAttributes) {
-				rel.withPivot(relation.pivotAttributes);
+				rel = rel.withPivot(relation.pivotAttributes);
+			}
+			if (relation.order) {
+				rel = rel.query('orderBy', relation.order.column, relation.order.direction);
 			}
 			return rel;
 		}

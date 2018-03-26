@@ -1,3 +1,5 @@
+import {Order} from '../';
+
 export function entity(tableName?: string, loadEager?: string[]) {
 	return (constructor: Function) => {
 		tableName = tableName || constructor.name.toLowerCase() + 's';
@@ -21,58 +23,62 @@ export function property(type, clazz?: new () => any) {
 	};
 }
 
-export function belongsTo(entity: string, loadEager?: boolean, foreignKey?: string) {
-	return (target: any, propertyKey: string) => {
-
-		let desc = target.constructor as ModelDesc;
-		addRelationProperty(desc, foreignKey ? foreignKey : propertyKey, RelationType.BELONGS_TO, entity);
-		if (loadEager) {
-			desc.__eager = desc.__eager || [];
-			desc.__eager.push(propertyKey);
-		}
-	};
-}
-
 export function timestamps() {
 	return (constructor: ModelDesc | any) => {
 		constructor.timestamps = true;
 	};
 }
 
-export function hasOne(entity: string, loadEager?: boolean) {
+export function belongsTo(entity: string, properties?: RelationProperties, foreignKey?: string) {
+	return (target: any, propertyKey: string) => {
+
+		let desc = target.constructor as ModelDesc;
+		addRelationProperty(desc, foreignKey ? foreignKey : propertyKey, RelationType.BELONGS_TO, entity);
+		if (properties && properties.loadEager) {
+			desc.__eager = desc.__eager || [];
+			desc.__eager.push(propertyKey);
+		}
+	};
+}
+
+export function hasOne(entity: string, properties?: RelationProperties) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
 		addRelationProperty(desc, propertyKey, RelationType.HAS_ONE, entity);
-		if (loadEager) {
+		if (properties && properties.loadEager) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
 		}
 	};
 }
 
-export function hasMany(entity: string, loadEager?: boolean, dependent?: boolean) {
+export function hasMany(entity: string, properties?: ManyRelationProperties) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
-		addRelationProperty(desc, propertyKey, RelationType.HAS_MANY, entity);
-		if (loadEager) {
-			desc.__eager = desc.__eager || [];
-			desc.__eager.push(propertyKey);
-		}
-		if (dependent) {
-			addDependentRelation(desc, propertyKey);
+		addRelationProperty(desc, propertyKey, RelationType.HAS_MANY, entity, null, properties.order);
+		if (properties) {
+			if (properties.loadEager) {
+				desc.__eager = desc.__eager || [];
+				desc.__eager.push(propertyKey);
+			}
+			if (properties.dependent) {
+				addDependentRelation(desc, propertyKey);
+			}
 		}
 	};
 }
 
-export function belongsToMany(entity: string, loadEager?: boolean, pivotAttributes?: string[], dependent?: boolean) {
+export function belongsToMany(entity: string, properties: BelongsToManyRelationProperties = {}) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
-		addRelationProperty(desc, propertyKey, RelationType.BELONGS_TO_MANY, entity, pivotAttributes);
-		if (loadEager) {
+		addRelationProperty(desc, propertyKey, RelationType.BELONGS_TO_MANY, entity,
+			properties.pivotAttributes,
+			properties.order);
+		if (properties.loadEager) {
 			desc.__eager = desc.__eager || [];
 			desc.__eager.push(propertyKey);
 		}
-		if (dependent) {
+		if (properties.dependent) {
 			addDependentRelation(desc, propertyKey);
 		}
 	};
@@ -107,12 +113,15 @@ function addSchemaProperty(proto, propertyKey: string, type: string, clazz?:  ne
 	});
 }
 
-function addRelationProperty(proto: ModelDesc, propertyKey: string, type: RelationType, entity:  string, pivotAttributes?: string[]) {
+function addRelationProperty(proto: ModelDesc, propertyKey: string, type: RelationType, entity:  string,
+							 pivotAttributes?: string[],
+							 order?: Order) {
 	proto.__relations = proto.__relations  || new Map<string, RelationDesc>();
 	proto.__relations.set(propertyKey, {
-		type: type,
-		entity: entity,
-		pivotAttributes: pivotAttributes
+		type,
+		entity,
+		pivotAttributes,
+		order
 	});
 }
 
@@ -133,6 +142,19 @@ export enum RelationType {
 
 }
 
+export interface RelationProperties {
+	loadEager?: boolean;
+}
+
+export interface ManyRelationProperties extends RelationProperties {
+	dependent?: boolean;
+	order?: Order;
+}
+
+export interface BelongsToManyRelationProperties extends ManyRelationProperties {
+	pivotAttributes?: string[];
+}
+
 export interface ModelDesc {
 
 	tableName?: string;
@@ -149,6 +171,7 @@ export interface RelationDesc {
 
 	type: RelationType,
 	entity: string,
-	pivotAttributes: string[]
+	pivotAttributes: string[];
+	order: Order;
 
 }
