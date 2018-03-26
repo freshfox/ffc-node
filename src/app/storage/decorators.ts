@@ -52,18 +52,16 @@ export function hasOne(entity: string, properties?: RelationProperties) {
 	};
 }
 
-export function hasMany(entity: string, properties?: ManyRelationProperties) {
+export function hasMany(entity: string, properties: ManyRelationProperties = {}) {
 	return (target: any, propertyKey: string) => {
 		let desc = target.constructor as ModelDesc;
 		addRelationProperty(desc, propertyKey, RelationType.HAS_MANY, entity, null, properties.order);
-		if (properties) {
-			if (properties.loadEager) {
-				desc.__eager = desc.__eager || [];
-				desc.__eager.push(propertyKey);
-			}
-			if (properties.dependent) {
-				addDependentRelation(desc, propertyKey);
-			}
+		if (properties.loadEager) {
+			desc.__eager = desc.__eager || [];
+			desc.__eager.push(propertyKey);
+		}
+		if (properties.dependent) {
+			addDependentRelation(desc, propertyKey);
 		}
 	};
 }
