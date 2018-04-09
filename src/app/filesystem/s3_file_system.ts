@@ -77,14 +77,15 @@ export class S3FileSystem implements IFilesystem {
 		return Promise.resolve();
 	}
 
-	writeStreamToFile(path: string, stream: Readable, options?) {
-		return this.s3Client.upload({
+	async writeStreamToFile(path: string, stream: Readable, options?) {
+		const file = await this.s3Client.upload({
 			Key: path,
 			Body: stream,
 			ContentDisposition: 'inline;',
 			ContentType: mime.lookup(path),
 			Bucket: this.config.s3Config.bucket
 		}).promise();
+		return file.Location;
 	}
 
 	getUploadUrl(path: string): string {
