@@ -212,4 +212,12 @@ describe('MysqlDriver', function () {
 
 	});
 
+	it('should return null if model wasn\'t found', async () => {
+		const user = await driver.find('users', {
+			firstname: 'does not exist',
+		});
+
+		should(user).null();
+	});
+
 });

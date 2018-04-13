@@ -13,7 +13,7 @@ import {TYPES} from '../core/types';
 @injectable()
 export class MySQLDriver implements StorageDriver {
 
-	private knex;
+	private readonly knex;
 	private bookshelf;
 	private models = {};
 
@@ -39,9 +39,9 @@ export class MySQLDriver implements StorageDriver {
 			.fetch({
 				withRelated: (options && options.withRelated) ? options.withRelated : MySQLDriver.getModel(this, entity).__eager
 			})
-			.then(function (model) {
+			.then((model) => {
 				if (!model) {
-					return;
+					return null;
 				}
 				return model.toJSON();
 			});
