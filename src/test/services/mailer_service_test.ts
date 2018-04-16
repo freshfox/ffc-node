@@ -3,8 +3,6 @@ import {MailerService, MailerType} from '../../app/services/mailer_service';
 
 describe('MailerService', function () {
 
-	this.timeout(5000);
-
 	const config = {
 		type: MailerType.SMTP,
 		options: {
