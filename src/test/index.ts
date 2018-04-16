@@ -1,0 +1,2 @@
+// Load config
+import '../../config';

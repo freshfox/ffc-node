@@ -18,6 +18,9 @@ export * from './http/router'
 export * from './http/server'
 export * from './http/validator'
 
+export * from './services/mailer_service';
+export * from './services/services_module';
+
 export * from './storage/decorators'
 export * from './storage/mysql_driver'
 export * from './storage/base_repository'

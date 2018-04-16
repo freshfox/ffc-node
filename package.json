@@ -51,7 +51,10 @@
     "mysql": "^2.14.1",
     "node-env-file": "^0.1.8",
     "reflect-metadata": "^0.1.10",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "nodemailer": "latest",
+    "nodemailer-smtp-transport": "latest",
+    "nodemailer-stub-transport": "latest"
   },
   "devDependencies": {
     "@types/bookshelf": "^0.9.6",
