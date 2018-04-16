@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+
+function r2a {
+	echo $(cd "$(dirname "$1")"; pwd)/$(basename "$1")
+}
+
+base=$(dirname $0)/..
+dirSrc=$(r2a ${base}/src)
+dirDist=$(r2a ${base}/dist)
+
+echo "Removing build directory"
+rm -rf ${dirDist}
+yarn run build:ts
+echo "Copying files..."
+(cd ${dirSrc} && find . -not -name '*.ts' -not -name "*.hbs" -type f | xargs cp -t ${dirDist} --parents)
