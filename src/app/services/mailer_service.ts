@@ -6,6 +6,8 @@ import {SendMailOptions, Transporter} from 'nodemailer';
 import {SmtpOptions} from 'nodemailer-smtp-transport';
 import {WebError} from '../error';
 
+export const MailerConfig = Symbol('IMailerConfig');
+
 @injectable()
 export class MailerService {
 
@@ -41,8 +43,6 @@ export class MailerService {
 		}
 	}
 }
-
-export const MailerConfig = Symbol('IMailerConfig');
 
 export interface IMailerConfig {
 	type: MailerType;
