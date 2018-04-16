@@ -9,6 +9,8 @@ import {KnexConfig, MySQLDriver} from '../../app/storage/mysql_driver';
 
 describe('Server', function () {
 
+	this.timeout(7000);
+
 	class TestServer extends Server {
 
 		getContainer(): Container {
