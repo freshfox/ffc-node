@@ -1,5 +1,6 @@
 import {ContainerModule} from 'inversify';
 import {IMailerConfig, MailerConfig, MailerService} from './mailer_service';
+import {TranslateService} from './translate_service';
 
 export class ServicesModule {
 
@@ -11,7 +12,10 @@ export class ServicesModule {
 			bind(MailerService).toSelf().inSingletonScope();
 			bind<IMailerConfig>(MailerConfig).toConstantValue(mailerConfig);
 
-		})
+			// Translations
+			bind(TranslateService).toSelf().inSingletonScope();
+
+		});
 	}
 
 	static create(mailerConfig: IMailerConfig): ContainerModule {
