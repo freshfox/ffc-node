@@ -1,25 +1,49 @@
 import {ContainerModule} from 'inversify';
 import {IMailerConfig, MailerConfig, MailerService} from './mailer_service';
-import {TranslateService} from './translate_service';
+import {ITranslateConfig, TranslateConfig, TranslateService} from './translate_service';
 
 export class ServicesModule {
 
-	private module: ContainerModule;
 
-	constructor(mailerConfig: IMailerConfig) {
-		this.module = new ContainerModule((bind) => {
+	static create(): ServicesModuleBuilder {
+		return new ServicesModuleBuilder();
+	}
+}
+
+export class ServicesModuleBuilder {
+
+	private mailerConfig: IMailerConfig;
+	private translationConfig: ITranslateConfig;
+
+	constructor() {
+
+	}
+
+	setMailerConfig(config: IMailerConfig) {
+		this.mailerConfig = config;
+		return this;
+	}
+
+	setTranslationConfig(config: ITranslateConfig) {
+		this.translationConfig = config;
+		return this;
+	}
+
+	build() {
+		return new ContainerModule((bind) => {
 			// Mail
-			bind(MailerService).toSelf().inSingletonScope();
-			bind<IMailerConfig>(MailerConfig).toConstantValue(mailerConfig);
+			if (this.mailerConfig) {
+				bind(MailerService).toSelf().inSingletonScope();
+				bind<IMailerConfig>(MailerConfig).toConstantValue(this.mailerConfig);
+			}
 
 			// Translations
-			bind(TranslateService).toSelf().inSingletonScope();
+			if (this.translationConfig) {
+				bind(TranslateService).toSelf().inSingletonScope();
+				bind<ITranslateConfig>(TranslateConfig).toConstantValue(this.translationConfig);
+			}
 
 		});
 	}
 
-	static create(mailerConfig: IMailerConfig): ContainerModule {
-		let md = new ServicesModule(mailerConfig);
-		return md.module;
-	}
 }

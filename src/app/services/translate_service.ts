@@ -1,15 +1,28 @@
 import "reflect-metadata";
-import {injectable} from 'inversify';
+import {inject, injectable} from 'inversify';
 const i18n = require('i18n');
-i18n.configure({
-	directory: __dirname + '/../locales',
-	defaultLocale: 'de',
-	objectNotation: true,
-	updateFiles: false //Pls why?
-});
+
+
+export const TranslateConfig = Symbol('TranslateConfig');
+
+export interface ITranslateConfig {
+	directory?: string,
+	defaultLocale?: string,
+	objectNotation?: boolean,
+	updateFiles?: boolean;
+}
 
 @injectable()
 export class TranslateService {
+
+	private static DEFAULT_CONFIG: ITranslateConfig = {
+		objectNotation: true,
+		updateFiles: false
+	};
+
+	constructor(@inject(TranslateConfig) config: ITranslateConfig) {
+		i18n.configure(Object.assign({} as any, TranslateService.DEFAULT_CONFIG, config));
+	}
 
 	translate(key: string, params?: any, locale?: string) {
 		if (locale) {
