@@ -24,7 +24,34 @@ export class PromiseUtils {
 		} catch (err) {
 			callback(err);
 		}
+	}
 
+	static async parallel<T, K>(items: T[], batchSize: number,
+								handler: (item: T) => Promise<K>,
+								onBatchFinished?: (items: K[]) => void): Promise<K[]> {
+		items = [...items];
+		const all = [];
+		while(items.length > 0) {
+			const batch = items.splice(0, batchSize);
+			const result = await Promise.all(batch.map((item) => {
+				return handler(item);
+			}));
+			if (onBatchFinished) {
+				onBatchFinished(result);
+			}
+		}
+		return all;
+	}
+
+	static async parallelWithResult<T, K>(items: T[], batchSize: number,
+								handler: (item: T) => Promise<K>): Promise<K[]> {
+		const all = [];
+		await this.parallel(items, batchSize, handler, (items) => {
+			items.forEach((item) => {
+				all.push(item);
+			});
+		});
+		return all;
 	}
 
 }
