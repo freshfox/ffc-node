@@ -9,7 +9,7 @@ import {WebError} from '../error';
 export abstract class JWTAuthenticator implements Authenticator {
 
 	private unauthenticatedPaths: string[];
-	private middleware: (req, res, next) => void;
+	private readonly middleware: (req, res, next) => void;
 
 	constructor() {
 		this.middleware = this.handle.bind(this);
@@ -23,7 +23,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 		app.use(this.getMiddleware());
 	}
 
-	handle(req, res, next) {
+	async handle(req, res, next) {
 		let needsAuth = this.unauthenticatedPaths && !(this.unauthenticatedPaths.find((path) => {
 			return req.path.startsWith(path);
 		}));
@@ -35,25 +35,36 @@ export abstract class JWTAuthenticator implements Authenticator {
 
 		let header: string = req.headers.authorization;
 		if (!header || !header.startsWith('Bearer')) {
-			throw WebError.unauthorized('Unauthorized');
+			const err = WebError.unauthorized('Unauthorized');
+			return next(err);
 		}
 		let token = header.split('Bearer ')[1];
 
-		jwt.verify(token, this.getSecret(), async (err, decoded) => {
-
-			if (err) {
-				console.error(err);
-				let error = WebError.unauthorized('Unauthorized');
-				return next(error);
-			}
-
+		try  {
+			const decoded = await this.verify(token);
 			const data = await this.deserialize(decoded.data);
-
 			Object.assign(req, {
 				user: data
 			});
 			next();
-		});
+		} catch (err) {
+			console.error(err);
+			let error = WebError.unauthorized('Unauthorized');
+			return next(error);
+		}
+
+	}
+
+	verify(token: string): Promise<any> {
+		return new Promise((resolve, reject) => {
+			jwt.verify(token, this.getSecret(), async (err, decoded) => {
+
+				if (err) {
+					return reject(err);
+				}
+				resolve(decoded);
+			});
+		})
 	}
 
 	getMiddleware(): (req, res, next) => void {
