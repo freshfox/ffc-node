@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import '../../../config';
 import {MailerService, MailerType} from '../../app/services/mailer_service';
 
 describe('MailerService', function () {
