@@ -10,6 +10,7 @@ import * as express from 'express';
 import {JWTAuthenticator, JWTOptions} from '../../app/http/jwt_authenticator';
 import {WebError} from '../../app/error';
 import {Authenticator} from '../../app/core/authenticator';
+import {ErrorMiddleware} from '../../app/http/error_handler';
 
 describe('JWTAuthenticator', function () {
 
@@ -44,6 +45,8 @@ describe('JWTAuthenticator', function () {
 			this.app.get('/', (req, res) => {
 				res.send(req.user);
 			});
+
+			this.app.use(new ErrorMiddleware().getMiddleware());
 
 		}
 	}
@@ -92,6 +95,13 @@ describe('JWTAuthenticator', function () {
 
 	const testCase = TestCase.create(this, new TestServer());
 
+	it('should send an unauthenticated request', async () => {
+
+		const res = await testCase.get('/');
+		should(res.status).eql(401);
+
+	});
+
 	it('should authenticate and serialize user', async () => {
 
 		const res1 = await testCase.post('/auth', {
@@ -110,6 +120,25 @@ describe('JWTAuthenticator', function () {
 			id: 1,
 			username: 'test_user'
 		});
+
+	});
+
+	it('should create a token and deserialize data', async () => {
+
+		const auth = new UserAuthenticator();
+
+		const data = {
+			user: 1,
+			account: 2,
+			test: 'test'
+		};
+
+		const token = await auth.sign(data, {});
+		console.log(token);
+
+		const data2 = await auth.verify(token);
+		should(data).eql(data2);
+
 
 	});
 

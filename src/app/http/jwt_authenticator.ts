@@ -42,7 +42,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 
 		try  {
 			const decoded = await this.verify(token);
-			const data = await this.deserialize(decoded.data);
+			const data = await this.deserialize(decoded);
 			Object.assign(req, {
 				user: data
 			});
@@ -62,7 +62,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 				if (err) {
 					return reject(err);
 				}
-				resolve(decoded);
+				resolve(decoded.data);
 			});
 		})
 	}
@@ -95,7 +95,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 		}
 	}
 
-	sign(data, options: JWTOptions) {
+	sign(data, options: JWTOptions): Promise<string> {
 		return new Promise((resolve, reject) => {
 			jwt.sign({
 				data: data,
