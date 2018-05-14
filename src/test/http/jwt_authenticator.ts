@@ -134,8 +134,6 @@ describe('JWTAuthenticator', function () {
 		};
 
 		const token = await auth.sign(data, {});
-		console.log(token);
-
 		const data2 = await auth.verify(token);
 		should(data).eql(data2);
 
