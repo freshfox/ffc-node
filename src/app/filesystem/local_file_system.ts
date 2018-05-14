@@ -3,11 +3,11 @@ import * as fs from 'fs';
 import {injectable} from 'inversify';
 import * as mkdirp from 'mkdirp';
 import * as path from 'path';
-import {IFilesystem} from './file_system';
+import {IFilesystem} from './filesystem';
 import * as stream from "stream";
 
 @injectable()
-export class LocalFileSystem implements IFilesystem {
+export class LocalFilesystem implements IFilesystem {
 
 	exists(path: string): Promise<boolean> {
 		return new Promise((resolve) => {

@@ -1,17 +1,15 @@
-import {FilesystemType, LocalFileSystem, TmpFileSystem} from '../../app';
+import {TmpFilesystem} from '../../app';
 import {Container} from 'inversify';
 import {FilesystemModule} from '../../app/filesystem/module';
 
-describe('FileSystem', function () {
+describe('Filesystem', function () {
 
 	const container = new Container();
-	const module = FilesystemModule.create({
-		defaultType: FilesystemType.TMP,
+	const module = FilesystemModule.create(TmpFilesystem, {
 		tmpDirectory: '/tmp/ffc-node'
 	});
 	container.load(module);
-	const fs = container.resolve(TmpFileSystem);
-	const local = container.resolve(LocalFileSystem);
+	const fs = container.resolve(TmpFilesystem);
 
     it('should write a file', async () => {
 
@@ -21,10 +19,6 @@ describe('FileSystem', function () {
     	const stream =  fs.createWriteStream('test/image.jpg');
 
 		stream.write(text);
-
-		return new Promise((resolve) => {
-			stream.end(resolve);
-		})
 
 
     });

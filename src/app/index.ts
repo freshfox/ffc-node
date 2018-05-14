@@ -7,9 +7,8 @@ export * from './core/kernel'
 export * from './core/service_provider'
 
 export * from './filesystem/module'
-export * from './filesystem/file_system'
+export * from './filesystem/filesystem'
 export * from './filesystem/local_file_system'
-export * from './filesystem/s3_file_system'
 export * from './filesystem/tmp_file_system'
 
 export * from './http/base_controller'

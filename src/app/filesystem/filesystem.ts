@@ -1,24 +1,10 @@
 import * as stream from "stream";
 
-export interface FilesystemConfig {
-	defaultType: FilesystemType,
+export interface ITmpFilesystemConfig {
 	tmpDirectory?: string;
-	s3Config?: {
-		bucket: string,
-		region: string,
-		uploadUrlExpireSeconds? : number
-	},
-	firebaseConfig?: {
-		bucket: string
-	}
 }
 
-export enum FilesystemType {
-	LOCAL = 'local',
-	S3 = 's3',
-	FIREBASE = 'firebase',
-	TMP = 'tmp'
-}
+export const FilesystemConfig = Symbol('FilesystemConfig');
 
 export interface IFilesystem {
 
