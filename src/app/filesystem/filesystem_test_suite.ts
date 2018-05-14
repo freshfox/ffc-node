@@ -1,12 +1,13 @@
-import * as should from 'should';
 import * as path from 'path';
-import {IFilesystem} from '../../app';
+import {IFilesystem} from '../../app/filesystem/filesystem';
 import {FileUtils} from '../../app/utils/file_utils';
 
 export function createFilesystemTestSuite(baseDirectory: string, fs: IFilesystem) {
 	function createPath(...paths) {
 		return path.join(baseDirectory, ...paths);
 	}
+
+	const should = require('should');
 
 	it('should write a file and check if it exists', async () => {
 
