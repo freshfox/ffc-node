@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import {Authenticator} from '../core/authenticator';
 import {Express, Request} from 'express';
-import * as jwt from 'jsonwebtoken';
 import {injectable} from 'inversify';
 import {WebError} from '../error';
+import {JsonWebToken, JWTOptions} from '../core/json_web_token';
 
 @injectable()
 export abstract class JWTAuthenticator implements Authenticator {
@@ -56,15 +56,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 	}
 
 	verify(token: string): Promise<any> {
-		return new Promise((resolve, reject) => {
-			jwt.verify(token, this.getSecret(), async (err, decoded) => {
-
-				if (err) {
-					return reject(err);
-				}
-				resolve(decoded.data);
-			});
-		})
+		return JsonWebToken.verify(this.getSecret(), token);
 	}
 
 	getMiddleware(): (req, res, next) => void {
@@ -96,17 +88,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 	}
 
 	sign(data, options: JWTOptions): Promise<string> {
-		return new Promise((resolve, reject) => {
-			jwt.sign({
-				data: data,
-			} as object, this.getSecret(), options, (err, token) => {
-				if (err) {
-					reject(err);
-				} else {
-					resolve(token);
-				}
-			});
-		});
+		return JsonWebToken.sign(data, this.getSecret(), options);
 	}
 
 	abstract findUser(req: Request): Promise<any>;
@@ -118,27 +100,4 @@ export abstract class JWTAuthenticator implements Authenticator {
 	deserialize(data) {
 		return data;
 	}
-}
-
-export interface JWTOptions {
-
-	/**
-	 * default: HS256
-	 */
-	algorithm?: string;
-	/**
-	 * Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"
-	 */
-	expiresIn?: number|string;
-	/**
-	 * Expressed in seconds or a string describing a time span zeit/ms. Eg: 60, "2 days", "10h", "7d"
-	 */
-	notBefore?: number|string;
-	audience?: string;
-	issuer?: string;
-	jwtid?: string;
-	subject?: string;
-	noTimestamp?: string;
-	header?: string;
-	keyid?: string;
 }

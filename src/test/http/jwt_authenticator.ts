@@ -7,10 +7,11 @@ import {StorageDriver} from '../../app/core/storage_driver';
 import {TestCase} from '../../app/test_case';
 import * as should from 'should';
 import * as express from 'express';
-import {JWTAuthenticator, JWTOptions} from '../../app/http/jwt_authenticator';
+import {JWTAuthenticator} from '../../app/http/jwt_authenticator';
 import {WebError} from '../../app/error';
 import {Authenticator} from '../../app/core/authenticator';
 import {ErrorMiddleware} from '../../app/http/error_handler';
+import {JWTOptions} from '../../app/core/json_web_token';
 
 describe('JWTAuthenticator', function () {
 
