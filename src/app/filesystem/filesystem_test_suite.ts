@@ -1,0 +1,67 @@
+import * as should from 'should';
+import * as path from 'path';
+import {IFilesystem} from '../../app';
+import {FileUtils} from '../../app/utils/file_utils';
+
+export function createFilesystemTestSuite(baseDirectory: string, fs: IFilesystem) {
+	function createPath(...paths) {
+		return path.join(baseDirectory, ...paths);
+	}
+
+	it('should write a file and check if it exists', async () => {
+
+		const date = Date.now();
+		const path = createPath(`test_${date}.txt`);
+		const stream = await fs.createWriteStream(path);
+		stream.write('ms' + date);
+		stream.end();
+		await FileUtils.awaitWriteFinish(stream);
+		await wait(100);
+
+		const exists = await fs.exists(path);
+		should(exists).true();
+	});
+
+	it('should write and read a file', async () => {
+
+		const date = Date.now();
+		const path = createPath(`test_${date}.txt`);
+		const stream = await fs.createWriteStream(path);
+		stream.write('Now: ');
+		stream.write(date + '');
+		stream.end();
+		await FileUtils.awaitWriteFinish(stream);
+		await wait(100);
+
+		const content = await fs.readFile(path, 'utf8');
+		should(content).type('string');
+		should(content).eql('Now: ' + date);
+	});
+
+	it('should create and delete a file', async () => {
+
+		const date = Date.now();
+		const path = createPath(`test_${date}.txt`);
+
+		should(await fs.exists(path)).false();
+
+		const stream = await fs.createWriteStream(path);
+		stream.write('test');
+		stream.end();
+		await FileUtils.awaitWriteFinish(stream);
+		await wait(200);
+
+		should(await fs.exists(path)).true();
+		await fs.unlink(path);
+		await wait(100);
+		should(await fs.exists(path)).false();
+
+	});
+
+}
+
+function wait(ms: number) {
+	return new Promise((resolve) => {
+		setTimeout(resolve, ms)
+	});
+}

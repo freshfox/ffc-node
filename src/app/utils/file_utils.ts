@@ -11,7 +11,7 @@ export class FileUtils {
 		return s;
 	}
 
-	awaitWriteFinish(stream: Writable) {
+	static awaitWriteFinish(stream: Writable) {
 		return new Promise((resolve, reject) => {
 			stream.on('finish', resolve);
 			stream.on('error', reject)

@@ -26,7 +26,8 @@ export class LocalFilesystem implements IFilesystem {
 	}
 
 	createWriteStream(file: string) {
-		mkdirp.sync(path.dirname(this.getPath(file)));
+		file = this.getPath(file);
+		mkdirp.sync(path.dirname(file));
 		return fs.createWriteStream(file);
 	}
 
