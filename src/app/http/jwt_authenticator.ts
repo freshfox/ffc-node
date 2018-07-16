@@ -6,7 +6,7 @@ import {WebError} from '../error';
 import {JsonWebToken, JWTOptions} from '../core/json_web_token';
 
 @injectable()
-export abstract class JWTAuthenticator<S, D> implements Authenticator {
+export abstract class JWTAuthenticator<S = any, D = any> implements Authenticator {
 
 	private unauthenticatedPaths: string[];
 	private readonly middleware: (req, res, next) => void;

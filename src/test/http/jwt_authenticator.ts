@@ -70,15 +70,15 @@ describe('JWTAuthenticator', function () {
 		}
 
 		serialize(user) {
-			return user.id;
+			return Promise.resolve(user.id);
 		}
 
 		deserialize(id) {
 			if (id === 1) {
-				return {
+				return Promise.resolve({
 					id: 1,
 					username: 'test_user'
-				}
+				});
 			}
 			throw WebError.unauthorized('User not found')
 		}
