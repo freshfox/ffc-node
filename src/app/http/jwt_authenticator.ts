@@ -6,12 +6,12 @@ import {WebError} from '../error';
 import {JsonWebToken, JWTOptions} from '../core/json_web_token';
 
 @injectable()
-export abstract class JWTAuthenticator implements Authenticator {
+export abstract class JWTAuthenticator<S, D> implements Authenticator {
 
 	private unauthenticatedPaths: string[];
 	private readonly middleware: (req, res, next) => void;
 
-	constructor() {
+	protected constructor() {
 		this.middleware = this.handle.bind(this);
 	}
 
@@ -55,7 +55,7 @@ export abstract class JWTAuthenticator implements Authenticator {
 
 	}
 
-	verify(token: string): Promise<any> {
+	verify(token: string): Promise<S> {
 		return JsonWebToken.verify(this.getSecret(), token);
 	}
 
@@ -91,13 +91,13 @@ export abstract class JWTAuthenticator implements Authenticator {
 		return JsonWebToken.sign(data, this.getSecret(), options);
 	}
 
-	abstract findUser(req: Request): Promise<any>;
+	abstract findUser(req: Request): Promise<D>;
 
-	serialize(data) {
-		return data;
+	serialize(data: D): Promise<S> {
+		return Promise.resolve(data as any);
 	}
 
-	deserialize(data) {
-		return data;
+	deserialize(data: S): Promise<D> {
+		return Promise.resolve(data as any);
 	}
 }
