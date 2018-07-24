@@ -95,6 +95,18 @@ export class MySQLDriver implements StorageDriver {
 			})
 	}
 
+	countQuery(entity: string, query: (qb) => any) {
+		return MySQLDriver.getModel(this, entity).forge()
+			.query(query)
+			.count()
+			.then((count) => {
+				if (typeof count === 'number') {
+					return count;
+				}
+				return count[0]['count(*)'];
+			})
+	}
+
 	destroy(entity: string, attributes) {
 		const where = _.omit(attributes, 'id');
 		let model = MySQLDriver.getModel(this, entity).forge(_.pick(attributes, 'id'));

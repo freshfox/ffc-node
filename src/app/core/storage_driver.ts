@@ -11,6 +11,8 @@ export interface StorageDriver {
 
 	count(entity: string, attributes?);
 
+	countQuery(entity: string, query: Query);
+
 	save(entity: string, data: any): Promise<any>;
 
 	destroy(entity: string, attributes): Promise<any>;

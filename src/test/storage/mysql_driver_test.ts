@@ -220,4 +220,18 @@ describe('MysqlDriver', function () {
 		should(user).null();
 	});
 
+	it('should count by query', async () => {
+
+		await driver.save('model_a', {text: 'u1'});
+		await driver.save('model_a', {text: 'u2'});
+		await driver.save('model_a', {text: 'u2'});
+
+		const count = await driver.countQuery('model_a', (qb) => {
+			qb.where('text', 'u2');
+		});
+
+		should(count).eql(2);
+
+	});
+
 });
