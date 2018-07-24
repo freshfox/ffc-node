@@ -41,6 +41,10 @@ export abstract class BaseRepository<T> {
 		return this.dataStore.count(this.model.tableName, attributes);
 	}
 
+	countQuery(query: Query): Promise<number> {
+		return this.dataStore.countQuery(this.model.tableName, query);
+	}
+
 	save(data: T): Promise<T> {
 		return this.dataStore.save(this.model.tableName, data);
 	}
