@@ -6,8 +6,8 @@ const i18n = require('i18n');
 export const TranslateConfig = Symbol('TranslateConfig');
 
 export interface ITranslateConfig {
-	directory?: string,
-	defaultLocale?: string,
+	directory: string,
+	defaultLocale: string,
 	objectNotation?: boolean,
 	updateFiles?: boolean;
 }
@@ -15,34 +15,37 @@ export interface ITranslateConfig {
 @injectable()
 export class TranslateService {
 
-	private static DEFAULT_CONFIG: ITranslateConfig = {
+	private static DEFAULT_CONFIG = {
 		objectNotation: true,
 		updateFiles: false
 	};
 
-	constructor(@inject(TranslateConfig) config: ITranslateConfig) {
-		i18n.configure(Object.assign({} as any, TranslateService.DEFAULT_CONFIG, config));
+	private translator = {} as any;
+
+	constructor(@inject(TranslateConfig) private config: ITranslateConfig) {
+
+		i18n.configure(Object.assign({} as any, TranslateService.DEFAULT_CONFIG, config, {
+			register: this.translator
+		}));
+
 	}
 
 	translate(key: string, params?: any, locale?: string) {
-		if (locale) {
-			if (params) {
-				return i18n.__({phrase: key, locale: locale}, ...params);
-			} else {
-				return i18n.__({phrase: key, locale: locale});
-			}
-		}
+		const options: any = {
+			phrase: key,
+			locale: locale || this.config.defaultLocale
+		};
 		if (params) {
 			if (Array.isArray(params)) {
-				return i18n.__(key, ...params);
+				return this.translator.__(options, ...params);
 			}
-			return i18n.__(key, params);
+			return this.translator.__(options, params);
 		}
-		return i18n.__(key);
+		return this.translator.__(options);
 	}
 
 	getAll() {
-		return i18n.getCatalog();
+		return this.translator.getCatalog();
 	}
 
 }

@@ -1,0 +1,4 @@
+{
+	"invoice": "Invoice",
+	"invoice_with_number": "Invoice #{{number}}"
+}
