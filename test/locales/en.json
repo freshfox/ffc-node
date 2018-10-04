@@ -1,6 +1,0 @@
-{
-	"invoice": "Invoice",
-	"invoice_with_number": "Invoice #{{number}}",
-	"test1": "Hello ' <> \" characters",
-	"test2": "Hello {{{replace}}}"
-}

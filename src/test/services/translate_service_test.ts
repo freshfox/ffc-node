@@ -6,7 +6,7 @@ import {TestCase} from '../../app';
 describe('TranslateService', function () {
 
 	const translateService = new TranslateService({
-		directory: path.resolve(__dirname, '../../../test/locales'),
+		directory: path.resolve(__dirname, '../locales'),
 		defaultLocale: 'en'
 	});
 
