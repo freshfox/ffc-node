@@ -1,4 +1,6 @@
 {
 	"invoice": "Rechnung",
-	"invoice_with_number": "Rechnung #{{number}}"
+	"invoice_with_number": "Rechnung #{{number}}",
+	"test1": "Hello ' <> \" characters",
+	"test2": "Hello {{{replace}}}"
 }

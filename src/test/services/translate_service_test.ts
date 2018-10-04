@@ -1,15 +1,12 @@
 import {TranslateService} from '../../app/services/translate_service';
 import *  as path from 'path';
 import * as should from 'should';
-import {TestCase, WebError} from '../../app';
+import {TestCase} from '../../app';
 
-describe('TranslateServer', function () {
-
-	const locales = path.resolve(__dirname, '../../../test/locales');
-	console.log(locales);
+describe('TranslateService', function () {
 
 	const translateService = new TranslateService({
-		directory: locales,
+		directory: path.resolve(__dirname, '../../../test/locales'),
 		defaultLocale: 'en'
 	});
 
@@ -53,6 +50,13 @@ describe('TranslateServer', function () {
 		}
 		delete catalog['de'].test;
 		should(errorThrown).eql(true, 'Error wasn\'t thrown');
+	});
+
+	it('should translate with special characters', async () => {
+
+		should(translateService.translate('test1')).eql('Hello \' <> " characters');
+		should(translateService.translate('test2', {replace: '<> \' "'})).eql('Hello <> \' "');
+
 	});
 
 });
