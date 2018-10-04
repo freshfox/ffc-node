@@ -1,6 +1,7 @@
 import {ContainerModule} from 'inversify';
 import {IMailerConfig, MailerConfig, MailerService} from './mailer_service';
 import {ITranslateConfig, TranslateConfig, TranslateService} from './translate_service';
+import {HandlebarsTemplateService, TemplateConfig} from './handlebars_template_service';
 
 export class ServicesModule {
 
@@ -14,6 +15,7 @@ export class ServicesModuleBuilder {
 
 	private mailerConfig: IMailerConfig;
 	private translationConfig: ITranslateConfig;
+	private templateConfig: TemplateConfig;
 
 	constructor() {
 
@@ -29,6 +31,11 @@ export class ServicesModuleBuilder {
 		return this;
 	}
 
+	setTemplateConfig(config: TemplateConfig) {
+		this.templateConfig = config;
+		return this;
+	}
+
 	build() {
 		return new ContainerModule((bind) => {
 			// Mail
@@ -41,6 +48,11 @@ export class ServicesModuleBuilder {
 			if (this.translationConfig) {
 				bind(TranslateService).toSelf().inSingletonScope();
 				bind<ITranslateConfig>(TranslateConfig).toConstantValue(this.translationConfig);
+			}
+
+			if (this.templateConfig) {
+				bind(HandlebarsTemplateService).toSelf().inSingletonScope();
+				bind<TemplateConfig>(HandlebarsTemplateService.CONFIG).toConstantValue(this.templateConfig);
 			}
 
 		});
