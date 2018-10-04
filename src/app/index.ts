@@ -20,6 +20,8 @@ export * from './http/validator'
 
 export * from './services/mailer_service';
 export * from './services/services_module';
+export * from './services/translate_service';
+export * from './services/handlebars_template_service';
 
 export * from './storage/decorators'
 export * from './storage/mysql_driver'
