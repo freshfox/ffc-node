@@ -53,9 +53,22 @@ describe('TranslateService', function () {
 	});
 
 	it('should translate with special characters', async () => {
-
 		should(translateService.translate('test1')).eql('Hello \' <> " characters');
 		should(translateService.translate('test2', {replace: '<> \' "'})).eql('Hello <> \' "');
+	});
+
+	it('should be able to create multiple instances of TranslateService', async () => {
+
+		const t2 = new TranslateService({
+			directory: path.resolve(__dirname, '../locales'),
+			defaultLocale: 'en'
+		});
+
+		const c1 = translateService.getAll();
+		const c2 = t2.getAll();
+
+		should(Object.keys(c1)).eql(['de', 'en']);
+		should(Object.keys(c2)).eql(['de', 'en']);
 
 	});
 

@@ -25,8 +25,9 @@ export class TranslateService {
 	constructor(@inject(TranslateConfig) private config: ITranslateConfig) {
 
 		i18n.configure(Object.assign({} as any, TranslateService.DEFAULT_CONFIG, config, {
-			register: this.translator
+			//register: this.translator
 		}));
+		this.translator = i18n;
 
 	}
 
