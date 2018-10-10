@@ -37,6 +37,7 @@
   "dependencies": {
     "@types/express": "^4.11.0",
     "@types/knex": "^0.14.8",
+    "@types/nodemailer": "^4.6.5",
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.5.0",
     "bookshelf": "^0.12.1",

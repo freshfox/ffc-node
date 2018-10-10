@@ -5,6 +5,7 @@ import * as stubTransport from 'nodemailer-stub-transport';
 import {SendMailOptions, Transporter} from 'nodemailer';
 import {SmtpOptions} from 'nodemailer-smtp-transport';
 import {WebError} from '../error';
+import {Readable} from "stream";
 
 export const MailerConfig = Symbol('IMailerConfig');
 
@@ -41,6 +42,18 @@ export class MailerService {
 		} catch (err) {
 			throw WebError.badRequest(err.message);
 		}
+	}
+
+	static addInlineImageAttachment(data: SendMailOptions, filename: string, content: string | Buffer | Readable): string {
+		const cid = Math.round(Math.random() * 10000);
+		data.attachments = data.attachments || [];
+		data.attachments.push({
+			cid: '' + cid,
+			contentDisposition: 'inline',
+			filename: filename,
+			content: content
+		});
+		return `cid:${cid}`;
 	}
 }
 
