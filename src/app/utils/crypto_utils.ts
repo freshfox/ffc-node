@@ -56,7 +56,7 @@ export class CryptoUtils {
 	}
 
 	static createRandomAplhaNumString(len: number) {
-		return uuid().substring(0, len).toUpperCase();
+		return uuid().replace('-', '').substring(0, len).toUpperCase();
 	}
 
 }
