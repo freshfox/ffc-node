@@ -90,7 +90,7 @@ export abstract class JWTAuthenticator<S = any, D = any> implements Authenticato
 
 	abstract findUser(req: Request): Promise<D>;
 
-	createResponse(user: D, token: string) {
+	protected createResponse(user: D, token: string) {
 		return {
 			token
 		}
