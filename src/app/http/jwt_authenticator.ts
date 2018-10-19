@@ -77,10 +77,7 @@ export abstract class JWTAuthenticator<S = any, D = any> implements Authenticato
 
 		try {
 			const token = await this.sign(data, this.getJWTOptions());
-			res.send({
-				token: token,
-				ttt: null
-			});
+			res.send(this.createResponse(user, token));
 		} catch(err) {
 			console.error(err);
 			next(WebError.unauthorized('Unauthorized'));
@@ -92,6 +89,12 @@ export abstract class JWTAuthenticator<S = any, D = any> implements Authenticato
 	}
 
 	abstract findUser(req: Request): Promise<D>;
+
+	createResponse(user: D, token: string) {
+		return {
+			token
+		}
+	}
 
 	serialize(data: D): Promise<S> {
 		return Promise.resolve(data as any);
