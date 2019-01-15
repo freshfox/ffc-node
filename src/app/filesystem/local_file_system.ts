@@ -21,10 +21,6 @@ export class LocalFilesystem implements IFilesystem {
 		return this.ensureDir(this.getPath(path));
 	}
 
-	getUploadUrl(path: string): string {
-		return null;
-	}
-
 	createWriteStream(file: string) {
 		file = this.getPath(file);
 		mkdirp.sync(path.dirname(file));
