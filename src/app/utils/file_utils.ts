@@ -20,7 +20,7 @@ export class FileUtils {
 		});
 	}
 
-	static downloadFile(fs: IFilesystem, url: string, destination: string) {
+	static downloadFile(fs: IFilesystem, url: string, destination: string): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const stream = fs.createWriteStream(destination);
 			const request = http.get(url, (response) => {
