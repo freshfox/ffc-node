@@ -11,6 +11,7 @@ export * from './filesystem/filesystem'
 export * from './filesystem/local_file_system'
 export * from './filesystem/tmp_file_system'
 export * from './filesystem/filesystem_test_suite'
+export * from './filesystem/online_filesystem'
 
 export * from './http/base_controller'
 export * from './http/jwt_authenticator'
