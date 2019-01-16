@@ -83,7 +83,7 @@ export class LocalFilesystem implements IFilesystem {
 	}
 
 	// noinspection JSMethodCanBeStatic
-	protected getPath(path: string) {
+	getPath(path: string) {
 		return path;
 	}
 

@@ -8,7 +8,7 @@ import {TYPES} from '../core/types';
 @injectable()
 export class TmpFilesystem extends LocalFilesystem {
 
-	private directory = '/tmp/' + CryptoUtils.createRandomAplhaNumString(6);
+	private readonly directory = '/tmp/' + CryptoUtils.createRandomAplhaNumString(6);
 
 	constructor(@inject(TYPES.FilesystemConfig) private config: ITmpFilesystemConfig) {
 		super();
@@ -17,7 +17,7 @@ export class TmpFilesystem extends LocalFilesystem {
 		}
 	}
 
-	protected getPath(file: string) {
+	getPath(file: string) {
 		return path.join(this.directory, file)
 	}
 
