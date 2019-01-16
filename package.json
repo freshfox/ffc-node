@@ -1,6 +1,6 @@
 {
   "name": "ffc-node",
-  "version": "13.4.0",
+  "version": "13.4.1",
   "description": "The Freshfox Core Node package",
   "main": "dist/app/index.js",
   "types": "dist/app/index.d.ts",
