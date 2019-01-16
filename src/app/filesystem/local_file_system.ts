@@ -18,7 +18,7 @@ export class LocalFilesystem implements IFilesystem {
 	}
 
 	mkdir(path: string): Promise<any> {
-		return this.ensureDirectoryExists(this.getPath(path));
+		return this.ensureDirectoryExists(path);
 	}
 
 	createWriteStream(file: string) {
@@ -58,7 +58,7 @@ export class LocalFilesystem implements IFilesystem {
 
 	async writeDataToFile(file: string, data, options?) {
 		file = this.getPath(file);
-		await this.ensureDirectoryExists(path.dirname(file));
+		await this.ensureDirectoryExists(file);
 		return new Promise((resolve, reject) => {
 			fs.writeFile(file, data, options, (err) => {
 				if (err) {
@@ -88,7 +88,7 @@ export class LocalFilesystem implements IFilesystem {
 	}
 
 	ensureDirectoryExists(file: string) {
-		const dir = path.dirname(file);
+		const dir = path.dirname(this.getPath(file));
 		return new Promise((resolve, reject) => {
 			mkdirp(dir, (err) => {
 				if (err) {
