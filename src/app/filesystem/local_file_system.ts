@@ -44,10 +44,10 @@ export class LocalFilesystem implements IFilesystem {
 	}
 
 	writeStreamToFile(file: string, stream: stream.Readable, options?) {
-		file = this.getPath(file);
+		const absPath = this.getPath(file);
 		return new Promise(async (resolve, reject) => {
 			await this.ensureDirectoryExists(file);
-			let fileStream = fs.createWriteStream(file, options);
+			let fileStream = fs.createWriteStream(absPath, options);
 			stream.pipe(fileStream);
 			stream.on('end', () => {
 				resolve(file);
@@ -57,14 +57,14 @@ export class LocalFilesystem implements IFilesystem {
 	}
 
 	async writeDataToFile(file: string, data, options?) {
-		file = this.getPath(file);
+		const absPath = this.getPath(file);
 		await this.ensureDirectoryExists(file);
 		return new Promise((resolve, reject) => {
-			fs.writeFile(file, data, options, (err) => {
+			fs.writeFile(absPath, data, options, (err) => {
 				if (err) {
 					reject(err);
 				} else {
-					resolve(file);
+					resolve(absPath);
 				}
 			});
 		});
