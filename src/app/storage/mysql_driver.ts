@@ -9,6 +9,7 @@ import * as dependents from 'bookshelf-cascade-delete';
 import {WebError} from '../error';
 import {ModelDesc, RelationDesc, RelationType} from './decorators';
 import {TYPES} from '../core/types';
+import Bookshelf = require('bookshelf');
 
 @injectable()
 export class MySQLDriver implements StorageDriver {
@@ -320,8 +321,17 @@ export class MySQLDriver implements StorageDriver {
 		const modelOnly = await model.forge(_.pick(attributes, 'id'))
 			.save(attributes);
 		const savedModel = await modelOnly.load(_.keys(relations));
-		let relationPromises = [];
-		_.forOwn(relations, (value, key) => {
+
+		await this.saveRelations(savedModel, relations);
+
+		return savedModel;
+	}
+
+	private async saveRelations(savedModel, relations) {
+		const relationPromises = [];
+		const keys = Object.keys(relations);
+		for (const key of keys) {
+			const value = relations[key];
 			let relation = savedModel.related(key);
 			let relationIds = [];
 			if (relation instanceof this.bookshelf.Collection) {
@@ -331,23 +341,26 @@ export class MySQLDriver implements StorageDriver {
 				}
 				for (let i = 0; i < value['length']; i++) {
 					let result = this.transformAndOmitAttachedObjects(relation.model, value[i]);
-					let p = relation.model.forge(result.attributes).save(foreignAttributes);
+					let p = await relation.model.forge(result.attributes).save(foreignAttributes);
 					relationPromises.push(p);
 					if (result.attributes.id) {
 						relationIds.push(result.attributes.id);
 					}
+					await this.saveRelations(p, result.relations);
 				}
 				let existingIds = _.map(relation.toJSON(), mapIds);
+				const loaded = await relation.load();
+				console.log(loaded);
 				let toDelete = _.difference(existingIds, relationIds);
 				if (toDelete.length > 0) {
 					relationPromises.push(relation.model.query().whereIn('id', toDelete).del());
 				}
 			}
-		});
+		}
+
 		if (relationPromises.length > 0) {
 			await Promise.all(relationPromises)
 		}
-		return savedModel;
 	}
 
 	private transformAndOmitAttachedObjects(model, data) {

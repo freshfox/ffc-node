@@ -1,74 +1,11 @@
-import {TYPES} from '../../app/core/types';
-import {TestCase} from '../../app/test_case';
-import {entity, ModelDesc} from '../../app/storage/decorators';
-import {KnexConfig, MySQLDriver} from '../../app/storage/mysql_driver';
-import {Container, injectable} from 'inversify';
-import {StorageDriver} from '../../app/core/storage_driver';
-import {BaseRepository, belongsToMany, hasMany} from '../../app';
+import {BaseRepository} from '../../app';
 import * as should from 'should';
-
-@entity('invoice_lines')
-class InvoiceLine {
-	id?: number;
-	order: number;
-	description: string;
-}
-
-@entity('payments')
-class Payment {
-	id?: number;
-	amount?: number;
-}
-
-@entity('invoices')
-class Invoice {
-	id?: number;
-	@hasMany('invoice_lines', {
-		loadEager: true,
-		order: {direction: 'asc', column: 'order'}
-	}) invoice_lines: InvoiceLine[];
-	@belongsToMany('payments', {
-		loadEager: true,
-		dependent: true,
-		order: { column: 'amount', direction: 'asc'}
-	}) payments?: Payment[];
-}
-
-
-@injectable()
-class InvoiceRepository extends BaseRepository<Invoice> {
-
-	constructor() {
-		super();
-		this.model = Invoice;
-	}
-
-}
-
-@injectable()
-class PaymentRepository extends BaseRepository<Payment> {
-
-	constructor() {
-		super();
-		this.model = Payment;
-	}
-
-}
+import {InvoiceRepository, Payment, PaymentRepository} from './models/invoice';
+import {createDatabaseTest} from '../index';
 
 describe('BaseRepository', function () {
 
-
-	let container = new Container();
-	container.bind<KnexConfig>(TYPES.KnexConfig).toConstantValue(require('../../../config/database'));
-	container.bind<StorageDriver>(TYPES.StorageDriver).to(MySQLDriver).inSingletonScope();
-	container.bind(InvoiceRepository).toSelf().inSingletonScope();
-	container.bind(PaymentRepository).toSelf().inSingletonScope();
-
-	let driver = container.get<StorageDriver>(TYPES.StorageDriver);
-	driver.registerEntity(InvoiceLine as ModelDesc);
-	driver.registerEntity(Payment as ModelDesc);
-	driver.registerEntity(Invoice as ModelDesc);
-	TestCase.createDatabaseOnly(this, container);
+	const container = createDatabaseTest(this);
 
 	const invoiceRepo = container.resolve(InvoiceRepository);
 	const paymentRepo = container.resolve(PaymentRepository);
