@@ -1,21 +1,21 @@
 import * as Checkit from 'checkit';
-import * as BPromise from 'bluebird';
 import * as _ from 'lodash';
 import {WebError} from "../error";
 import {injectable} from 'inversify';
+import * as moment from 'moment';
 
 @injectable()
 export class Validator {
 
-	validate(rules, data) {
+	validate<T>(baseRules: RuleSet<T>, data: T): Promise<T> {
 
-		let subRules = _.pickBy(rules, _.isPlainObject);
-		rules = _.omitBy(rules, _.isPlainObject);
+		let subRules = _.pickBy(baseRules, _.isPlainObject);
+		const rules = _.omitBy(baseRules, _.isPlainObject);
 
 		let validatedObject = {};
 		let subErrors = {};
 		let hasSubError = false;
-		_.forOwn(subRules, (val, key) => {
+		_.forOwn(subRules, (val: any, key) => {
 			if (val._self) {
 				rules[key] = val._self;
 				val = _.omit(val, '_self');
@@ -56,12 +56,12 @@ export class Validator {
 			_.defaults(validatedObject, result[1]);
 		}
 
-		return new BPromise(function (resolve, reject) {
+		return new Promise(function (resolve, reject) {
 
 			if (error) {
 				reject(error);
 			} else {
-				resolve(validatedObject);
+				resolve(validatedObject as any);
 			}
 
 		});
@@ -90,6 +90,18 @@ export class Validator {
 
 Validator.register('boolean', (val) => {
 	return typeof val == 'boolean';
+});
+
+Validator.register('boolish', (val) => {
+	return typeof val == 'boolean' || val === 1 || val === 0;
+});
+
+Validator.register('optional', () => {
+	return true;
+});
+
+Validator.register('dateTime', (val) => {
+	return moment(val, moment.ISO_8601, true).isValid();
 });
 
 Validator.register('dateString', (dateString) => {
@@ -122,3 +134,8 @@ Validator.register('dateString', (dateString) => {
 	return day > 0 && day <= monthLength[month - 1];
 });
 
+export type RuleSet<T> = {
+	[K in keyof T]: Rule;
+};
+
+export type Rule = string | string[];
