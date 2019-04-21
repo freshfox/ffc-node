@@ -17,7 +17,8 @@ export * from './http/base_controller'
 export * from './http/jwt_authenticator'
 export * from './http/router'
 export * from './http/server'
-export * from './http/validator'
+export * from './http/old_validator'
+export * from './http/validator';
 
 export * from './services/mailer_service';
 export * from './services/services_module';
