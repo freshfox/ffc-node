@@ -124,6 +124,23 @@ describe('JWTAuthenticator', function () {
 
 	});
 
+	it('should authenticate and serialize user via query param', async () => {
+
+		const res1 = await testCase.post('/auth', {
+			username: 'test_user'
+		});
+		should(res1.status).eql(200);
+		should(res1.body).property('token');
+
+		const res2 = await testCase.get(`/?token=${res1.body.token}`);
+		should(res2.status).eql(200);
+		should(res2.body).eql({
+			id: 1,
+			username: 'test_user'
+		});
+
+	});
+
 	it('should create a token and deserialize data', async () => {
 
 		const auth = new UserAuthenticator();
