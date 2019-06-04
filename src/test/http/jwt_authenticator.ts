@@ -37,7 +37,7 @@ describe('JWTAuthenticator', function () {
 			}));
 
 			let auth = this.container.get<Authenticator>(TYPES.Authenticator);
-			auth.setup(this.app);
+			this.app.use(auth.getMiddleware());
 
 			this.app.post('/auth', (req, res, next) => {
 				return auth.authenticate(req, res, next)
