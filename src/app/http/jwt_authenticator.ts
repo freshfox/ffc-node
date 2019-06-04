@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import {Authenticator} from '../core/authenticator';
-import {Express, Request} from 'express';
+import {Request} from 'express';
 import {injectable} from 'inversify';
 import {WebError} from '../error';
 import {JsonWebToken, JWTOptions} from '../core/json_web_token';
@@ -15,14 +15,6 @@ export abstract class JWTAuthenticator<S = any, D = any> implements Authenticato
 		this.middleware = this.handle.bind(this);
 	}
 
-
-	/**
-	 * @deprecated Use #getMiddleware() instead
-	 */
-	setup(app: Express) {
-		app.use(this.getMiddleware());
-	}
-
 	async handle(req, res, next) {
 		let needsAuth = this.unauthenticatedPaths && !(this.unauthenticatedPaths.find((path) => {
 			return req.path.startsWith(path);
@@ -33,12 +25,11 @@ export abstract class JWTAuthenticator<S = any, D = any> implements Authenticato
 			return;
 		}
 
-		let header: string = req.headers.authorization;
-		if (!header || !header.startsWith('Bearer')) {
+		let token = this.getTokenFromRequest(req);
+		if (!token) {
 			const err = WebError.unauthorized('Unauthorized');
 			return next(err);
 		}
-		let token = header.split('Bearer ')[1];
 
 		try  {
 			const decoded = await this.verify(token);
@@ -65,6 +56,18 @@ export abstract class JWTAuthenticator<S = any, D = any> implements Authenticato
 
 	protected setUnauthenticatedPaths(paths: string[]) {
 		this.unauthenticatedPaths = paths;
+	}
+
+	// noinspection JSMethodCanBeStatic
+	protected getTokenFromRequest(req: Request): string {
+		const header = req.headers.authorization as string;
+		if (header && header.startsWith('Bearer')) {
+			return header.split('Bearer ')[1];
+		}
+		if (req.query.token) {
+			return req.query.token;
+		}
+		return null;
 	}
 
 	protected abstract getSecret();
