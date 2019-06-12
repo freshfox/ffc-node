@@ -19,7 +19,7 @@ export class Validator {
 		}
 	}
 
-	static get schema(): Joi {
+	static get schema() {
 		return Joi;
 	}
 
