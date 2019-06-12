@@ -36,6 +36,7 @@
   "homepage": "https://github.com/freshfox/ffc-node",
   "dependencies": {
     "@types/express": "^4.11.0",
+    "@types/joi": "^14.3.3",
     "@types/knex": "^0.14.8",
     "@types/nodemailer": "^4.6.5",
     "bcrypt-nodejs": "0.0.3",
