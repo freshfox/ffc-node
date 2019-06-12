@@ -25,7 +25,7 @@ export abstract class JWTAuthenticator<S = any, D = any> implements Authenticato
 			return;
 		}
 
-		let token = this.getTokenFromRequest(req);
+		const token = this.getTokenFromRequest(req);
 		if (!token) {
 			const err = WebError.unauthorized('Unauthorized');
 			return next(err);
