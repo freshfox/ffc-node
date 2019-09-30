@@ -59,6 +59,22 @@ export function createFilesystemTestSuite(baseDirectory: string, fs: IFilesystem
 
 	});
 
+	it('should list files in a directory', async () => {
+
+		const dir = `dir_${Date.now()}`;
+		const files = ['test_1.txt', 'test_2.txt', 'test_3.txt'];
+
+		for (const file of files) {
+			const stream = await fs.createWriteStream(createPath(dir, file));
+			stream.write('test');
+			stream.end();
+			await FileUtils.awaitWriteFinish(stream);
+		}
+
+		const readFiles = await fs.readDir(createPath(dir));
+		should(readFiles).eql(files);
+	});
+
 }
 
 function wait(ms: number) {
