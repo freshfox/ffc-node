@@ -22,4 +22,6 @@ export interface IFilesystem {
 
 	mkdir(path: string): Promise<void>;
 
+	readDir(path: string): Promise<string[]>
+
 }

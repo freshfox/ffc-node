@@ -31,7 +31,7 @@ export class LocalFilesystem implements IFilesystem {
 		return fs.createReadStream(this.getPath(path));
 	}
 
-	readFile(path: string, encoding): Promise<string|Buffer> {
+	readFile(path: string, encoding): Promise<string | Buffer> {
 		return new Promise((resolve, reject) => {
 			fs.readFile(this.getPath(path), encoding, (err, content) => {
 				if (err) {
@@ -85,6 +85,18 @@ export class LocalFilesystem implements IFilesystem {
 	// noinspection JSMethodCanBeStatic
 	getPath(path: string) {
 		return path;
+	}
+
+	readDir(path: string): Promise<string[]> {
+		return new Promise((resolve, reject) => {
+			fs.readdir(this.getPath(path), (err, files) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(files);
+				}
+			});
+		});
 	}
 
 	ensureDirectoryExists(file: string) {
