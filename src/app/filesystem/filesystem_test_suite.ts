@@ -75,6 +75,12 @@ export function createFilesystemTestSuite(baseDirectory: string, fs: IFilesystem
 		should(readFiles).eql(files);
 	});
 
+	it('should not throw an error if directory doesn\'t exist', async () => {
+
+		const files = await fs.readDir(createPath(`some_dir_${Date.now()}`));
+		should(files).length(0);
+
+	});
 }
 
 function wait(ms: number) {

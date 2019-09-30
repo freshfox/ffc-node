@@ -87,7 +87,11 @@ export class LocalFilesystem implements IFilesystem {
 		return path;
 	}
 
-	readDir(path: string): Promise<string[]> {
+	async readDir(path: string): Promise<string[]> {
+		const dirExists = await this.exists(path);
+		if (!dirExists) {
+			return [];
+		}
 		return new Promise((resolve, reject) => {
 			fs.readdir(this.getPath(path), (err, files) => {
 				if (err) {
