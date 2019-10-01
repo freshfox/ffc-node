@@ -21,14 +21,14 @@ export class LocalFilesystem implements IFilesystem {
 		return this.ensureDirectoryExists(path);
 	}
 
-	createWriteStream(file: string) {
+	createWriteStream(file: string, opts?: any) {
 		file = this.getPath(file);
 		mkdirp.sync(path.dirname(file));
-		return fs.createWriteStream(file);
+		return fs.createWriteStream(file, opts);
 	}
 
-	createReadStream(path: string) {
-		return fs.createReadStream(this.getPath(path));
+	createReadStream(path: string, opts?: any) {
+		return fs.createReadStream(this.getPath(path), opts);
 	}
 
 	readFile(path: string, encoding): Promise<string | Buffer> {

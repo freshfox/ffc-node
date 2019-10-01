@@ -8,9 +8,9 @@ export const FilesystemConfig = Symbol('FilesystemConfig');
 
 export interface IFilesystem {
 
-	createWriteStream(path: string): stream.Writable;
+	createWriteStream(path: string, opts?: any): stream.Writable;
 
-	createReadStream(path: string): stream.Readable;
+	createReadStream(path: string, opts?: any): stream.Readable;
 
 	readFile(path: string, encoding?: string): Promise<string|Buffer>;
 
