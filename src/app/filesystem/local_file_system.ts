@@ -5,6 +5,7 @@ import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import {IFilesystem} from './filesystem';
 import * as stream from "stream";
+import {Stats} from "fs";
 
 @injectable()
 export class LocalFilesystem implements IFilesystem {
@@ -113,5 +114,34 @@ export class LocalFilesystem implements IFilesystem {
 				return resolve();
 			});
 		});
+	}
+
+	lstat(file: string): Promise<Stats> {
+		const absPath = this.getPath(file);
+		return new Promise((resolve, reject) => {
+			fs.lstat(absPath, (err, stats) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve(stats);
+				}
+			})
+		});
+	}
+
+	async dirSize(directory: string): Promise<number> {
+		const files = await this.readDir(directory);
+		let size = 0;
+		for (const file of files) {
+			const abs = path.join(directory, file);
+			const stats = await this.lstat(abs);
+			if (stats.isDirectory()) {
+				const subSize = await this.dirSize(abs);
+				size += subSize;
+			} else {
+				size += stats.size;
+			}
+		}
+		return size;
 	}
 }
