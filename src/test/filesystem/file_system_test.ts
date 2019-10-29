@@ -43,7 +43,6 @@ describe('Filesystem', function () {
 
 		const start = Date.now();
 		const size = await fs.dirSize(dir);
-		console.log(size, Date.now() - start);
 		should(size).eql(8 * data.length);
 
 	});
