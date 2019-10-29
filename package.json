@@ -54,7 +54,7 @@
     "inversify-express-utils": "^5.2.0",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.1.1",
-    "knex": "^0.14.4",
+    "knex": "^0.19.5",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "mysql": "^2.14.1",
