@@ -24,4 +24,10 @@ export interface IFilesystem {
 
 	readDir(path: string): Promise<string[]>
 
+	lstat(path: string): Promise<Stats>
+
+}
+
+export interface Stats {
+	size: number
 }
