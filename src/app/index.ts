@@ -5,6 +5,7 @@ export * from './core/storage_driver'
 export * from './core/types'
 export * from './core/kernel'
 export * from './core/service_provider'
+export * from './core/json_web_token'
 
 export * from './http/base_controller'
 export * from './http/jwt_authenticator'
