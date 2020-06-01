@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt-nodejs';
-import * as uuid from 'uuid/v4';
+import {v4 as uuid} from 'uuid';
 
 export class CryptoUtils {
 

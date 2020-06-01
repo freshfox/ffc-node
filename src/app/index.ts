@@ -1,7 +1,5 @@
 import 'reflect-metadata';
 
-export * from './core/storage_driver'
-export * from './core/types'
 export * from './core/kernel'
 export * from './core/service_provider'
 

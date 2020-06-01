@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import {interfaces as expressInterfaces, TYPE} from 'inversify-express-utils';
 import {Container, ContainerModule, decorate, injectable, interfaces} from 'inversify';
 
 export class Kernel {
@@ -15,11 +14,6 @@ export class Kernel {
 	public bindSingleton<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>, clazz: interfaces.Newable<any>) {
 		this.container.bind<T>(serviceIdentifier).to(clazz).inSingletonScope();
 	};
-
-	bindExpressController(clazz: interfaces.Newable<any>) {
-		this.getContainer().bind<expressInterfaces.Controller>(TYPE.Controller)
-			.to(clazz).whenTargetNamed(clazz.name);
-	}
 
 	bind<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): interfaces.BindingToSyntax<T> {
 		return this.container.bind(serviceIdentifier);

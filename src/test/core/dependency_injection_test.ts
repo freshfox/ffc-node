@@ -1,25 +1,10 @@
 import 'reflect-metadata';
 import {Container} from 'inversify';
-import {StorageDriver} from '../../app/core/storage_driver';
-import {TYPES} from '../../app/core/types';
-import {KnexConfig, MySQLDriver} from '../../app/storage/mysql_driver';
 import * as should from 'should';
-import {MailerService, MailerType, ServicesModule, TestCase} from '../../app';
+import {MailerService, MailerType, ServicesModule, shouldNotHappen} from '../../app';
 import {TranslateService} from '../../app/services/translate_service';
-const config = require('../../../config/database');
 
 describe('DependencyInjection', () => {
-
-	it('should test types of DI', () => {
-
-		let container = new Container();
-		container.bind<KnexConfig>(TYPES.KnexConfig).toConstantValue(config);
-		container.bind<StorageDriver>(TYPES.StorageDriver).to(MySQLDriver).inSingletonScope();
-
-		const driver = container.get<StorageDriver>(TYPES.StorageDriver);
-		should(driver).instanceOf(MySQLDriver);
-
-	});
 
 	it('should resolve MailerService from module', async () => {
 
@@ -49,7 +34,7 @@ describe('DependencyInjection', () => {
 
 		try {
 			container.resolve(TranslateService);
-			TestCase.shouldNotHappen();
+			shouldNotHappen();
 		} catch (err) {
 			should(err.message).eql('No matching bindings found for serviceIdentifier: Symbol(TranslateConfig)');
 		}

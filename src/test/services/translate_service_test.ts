@@ -1,7 +1,7 @@
 import {TranslateService} from '../../app/services/translate_service';
 import *  as path from 'path';
 import * as should from 'should';
-import {TestCase} from '../../app';
+import {checkLocalizedStrings} from '../../app';
 
 describe('TranslateService', function () {
 
@@ -32,7 +32,7 @@ describe('TranslateService', function () {
 	});
 
 	it('should check if all strings are localized', async () => {
-		TestCase.checkLocalizedStrings(translateService);
+		checkLocalizedStrings(translateService);
 	});
 
 	it('should fail if a string isn\'t localized', async () => {
@@ -43,7 +43,7 @@ describe('TranslateService', function () {
 		let errorThrown = false;
 
 		try {
-			TestCase.checkLocalizedStrings(translateService);
+			checkLocalizedStrings(translateService);
 		} catch (err) {
 			errorThrown = true;
 			should(err.code).eql(0);
